@@ -1,8 +1,19 @@
 import argparse
 import sys
+from graph import Graph
+
+
+class Launch():
+    def __init__(self,date,max_payload,fixed_cost,variable_cost):
+        self.date = date
+        self.max_payload = max_payload
+        self.fixed_cost = fixed_cost
+        self.variable_cost = variable_cost
+
 
 def readFile(filename):
-
+    g = Graph()
+    launches = []
     with open(filename, 'r')  as f:
         lines = f.readlines()
 
@@ -10,17 +21,17 @@ def readFile(filename):
             data = line.split()
             if(line[0]=='V'): #vertice
                 vId,weight = data[0],data[1]
-                print("Vertice Id: %s Weight: %s" %(vId,weight))
+                g.addNode(vId,{'weight':weight})
             elif(line[0]=='E'): #edge
                 vId1,vId2 = data[1],data[2]
-                print("Vertice Id1: %s Vertice Id2: %s" %(vId1,vId2))
+                g.addEdge(vId1,vId2)
             elif(line[0]=='L'): #launch
-                date,max_payload,fixed_cost,variable_cost = data[1],data[2],data[3],data[4]
-                print("date: %s max_payload: %s fixed_cost: %s variable_cost: %s" %(date,max_payload,fixed_cost,variable_cost))
+                l = Launch(data[1],data[2],data[3],data[4])
+                launches.append(l)
             else:
                 print("Invalid File Format")
                 #raise
-
+    return g
 
 
 def main(args):
