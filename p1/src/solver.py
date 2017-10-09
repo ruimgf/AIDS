@@ -1,7 +1,6 @@
-import argparse
 import sys
-from graph import Graph
-
+import networkx as nx
+import matplotlib.pyplot as plt
 
 class Launch():
     def __init__(self,date,max_payload,fixed_cost,variable_cost):
@@ -10,40 +9,35 @@ class Launch():
         self.fixed_cost = fixed_cost
         self.variable_cost = variable_cost
 
-
 def readFile(filename):
-    g = Graph()
+    g = nx.Graph()
     launches = []
     with open(filename, 'r')  as f:
         lines = f.readlines()
-
         for line in lines:
             data = line.split()
             if(line[0]=='V'): #vertice
                 vId,weight = data[0],data[1]
-                g.addNode(vId,{'weight':weight})
+                g.add_node(vId,weight=weight)
             elif(line[0]=='E'): #edge
                 vId1,vId2 = data[1],data[2]
-                g.addEdge(vId1,vId2)
+                g.add_edge(vId1,vId2)
             elif(line[0]=='L'): #launch
                 l = Launch(data[1],data[2],data[3],data[4])
                 launches.append(l)
             else:
                 print("Invalid File Format")
-                #raise
+                # TODO
+                #raise exception
+
+    g.graph['launches'] = launches
     return g
 
 
 def main(args):
-    readFile(args[1])
-
-def parse_arguments(argv):
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('SearchType',type=str, help='SearchType that should be use can be uninformed search method or informed search method')
-
-    return parser.parse_args(argv)
-
+    G = readFile(args[1])
+    nx.draw(G, with_labels=True, font_weight='bold')
+    plt.show()
 
 if __name__ == '__main__':
     main(sys.argv[1:])
