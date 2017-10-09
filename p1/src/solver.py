@@ -10,6 +10,8 @@ class Launch():
         self.variable_cost = variable_cost
     def __repr__(self):
         return ("%s,%s,%s,%s"%(self.date,self.max_payload,self.fixed_cost,self.variable_cost))
+    def computeCost(self,totalWeight):
+        return (self.fixed_cost + self.variable_cost * totalWeight)
 
 def readFile(filename):
     g = nx.Graph()
