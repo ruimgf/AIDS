@@ -8,6 +8,8 @@ class Launch():
         self.max_payload = max_payload
         self.fixed_cost = fixed_cost
         self.variable_cost = variable_cost
+    def __repr__(self):
+        return ("%s,%s,%s,%s"%(self.date,self.max_payload,self.fixed_cost,self.variable_cost))
 
 def readFile(filename):
     g = nx.Graph()
@@ -37,6 +39,7 @@ def readFile(filename):
 def main(args):
     G = readFile(args[1])
     nx.draw(G, with_labels=True, font_weight='bold')
+    print(G.graph['launches'])
     plt.show()
 
 if __name__ == '__main__':
