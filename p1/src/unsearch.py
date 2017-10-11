@@ -1,5 +1,7 @@
 from ourgraph import OurGraph
 from node import Node
+from queue import *
+
 
 class SearchState():
     self.launch = None
@@ -7,7 +9,7 @@ class SearchState():
 
     def __init__(self):
         pass
-    
+
     def isa_goal_state(self):
         pass
 
@@ -21,7 +23,7 @@ class UniformedSearch():
     """docstring for UniformedSearch."""
     def __init__(self,structure_graph):
         #self.search_tree = OurGraph()
-        self.fringe = [Node(1,actionsPreformed=[])]
+        #self.fringe = [Node(1,actionsPreformed=[])]
         self.structure_graph = structure_graph
 
     def init_search(self):

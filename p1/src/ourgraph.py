@@ -11,7 +11,7 @@ class OurGraph:
     info = {}
     def __len__(self):
         return len(self.nodes)
-
+    
     def add_edge(self,nodeA,nodeB,**kwargs):
         edge = Edge(nodeA,nodeB,**kwargs)
         self.nodes[nodeA].neigh.append(edge)
