@@ -1,45 +1,48 @@
 from node import Node
 from edge import Edge
 import networkx as nx # só usado para desenhar o grafo
+from iofiles import Launch
+import matplotlib.pyplot as plt
 
 class OurGraph:
-
-    def __init__(self):
-        self.nodes = {}
-        self.edges = []
-        pass
+    nodes = {}
+    edges = []
 
     def __len__(self):
         return len(self.nodes)
 
-    def add_edge(self,nodeA,nodeB,info=None):
-        edge = Edge(nodeA,nodeB,info)
+    def add_edge(self,nodeA,nodeB,**kwargs):
+        edge = Edge(nodeA,nodeB,**kwargs)
         self.nodes[nodeA].neigh.append(edge)
         self.nodes[nodeB].neigh.append(edge)
         self.edges.append(edge)
 
-    def add_node(self,nodeId,info=None):
+    def add_node(self,nodeId,**kwargs):
         if nodeId not in self.nodes.keys():
-            self.nodes[nodeId] = Node(nodeId,info)
+            self.nodes[nodeId] = Node(nodeId,**kwargs)
         else:
             raise ValueError('NodeId already exists in Graph')
+
     def draw_graph(self):
-        # add al to a nx graph
-        pass
-        #nx.draw(G, with_labels=True, font_weight='bold')
-        #plt.show()
+        G = nx.Graph()
+        for edge in self.edges:
+            G.add_edge(edge.nodeA,edge.nodeB)
+        nx.draw(G, with_labels=True, font_weight='bold')
+        plt.show()
+
     @staticmethod
     def read_from_file(filename):
         pass
 
 
 class StructureGraph(OurGraph):
-    """docstring for ."""
+    """docstring for StructureGraph."""
     def __init__(self):
         super(OurGraph, self).__init__()
 
     @staticmethod
     def read_from_file(filename):
+        print("Loading Graph from file...",end='')
         g = StructureGraph()
         launches = []
         with open(filename, 'r')  as f:
@@ -59,4 +62,5 @@ class StructureGraph(OurGraph):
                     raise Exception("Invalid file format")
 
         #g.graph['launches']=launches
+        print("..Done")
         return g
