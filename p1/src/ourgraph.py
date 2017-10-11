@@ -5,9 +5,10 @@ from iofiles import Launch
 import matplotlib.pyplot as plt
 
 class OurGraph:
+
     nodes = {}
     edges = []
-
+    info = {}
     def __len__(self):
         return len(self.nodes)
 
@@ -42,7 +43,7 @@ class StructureGraph(OurGraph):
 
     @staticmethod
     def read_from_file(filename):
-        print("Loading Graph from file...",end='')
+        print("Loading Graph from file.......",end='')
         g = StructureGraph()
         launches = []
         with open(filename, 'r')  as f:
@@ -61,6 +62,6 @@ class StructureGraph(OurGraph):
                 else:
                     raise Exception("Invalid file format")
 
-        #g.graph['launches']=launches
-        print("..Done")
+        g.info['launches']=launches
+        print("....Done")
         return g
