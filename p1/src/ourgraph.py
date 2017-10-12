@@ -1,8 +1,8 @@
 from node import Node
 from edge import Edge
 import networkx as nx # só usado para desenhar o grafo
-from iofiles import Launch
 import matplotlib.pyplot as plt
+from assemblyProb import Launch
 
 class OurGraph:
 
@@ -53,7 +53,7 @@ class StructureGraph(OurGraph):
                 data = line.split()
                 if(line[0]=='V'): #vertice
                     vId,weight = data[0],data[1]
-                    g.add_node(vId,weight=weight)
+                    g.add_node(vId,weight=float(weight))
                 elif(line[0]=='E'): #edge
                     vId1,vId2 = data[1],data[2]
                     g.add_edge(vId1,vId2)
