@@ -8,4 +8,4 @@ class Launch():
         return ("%s,%s,%s,%s"%(self.date,self.max_payload,self.fixed_cost,self.variable_cost))
     def computeCost(self):
         return (self.fixed_cost + self.variable_cost * totalWeight)
-    def 
+
