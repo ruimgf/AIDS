@@ -43,6 +43,10 @@ class OurState:
             valid_pieces = [p for p in leftpieces if p in list(air_neigh)]
 
         succ = []
+        if (self.launch_nr + 1 < len(self.launches)):
+            sendLauches = copy.deepcopy(self.launches)
+            s = OurState(self.g, sendLauches, self.launch_nr + 1)
+            succ.append(s)
 
         for piece in valid_pieces:
             if self.launches[self.launch_nr].can_insert(self.g.nodes[piece].info['weight']):
@@ -52,10 +56,7 @@ class OurState:
                 s = OurState(self.g,sendLauches,self.launch_nr)
                 succ.append(s)
 
-        if(self.launch_nr + 1 < len(self.launches)):
-            sendLauches = copy.deepcopy(self.launches)
-            s = OurState(self.g, sendLauches, self.launch_nr+1)
-            succ.append(s)
+
         return succ
 
 
