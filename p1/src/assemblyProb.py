@@ -1,15 +1,16 @@
 from node import Node
 import copy
-class OurState:
 
-    def __init__(self,g,launches=None,launch_nr=0):
+
+class OurState:
+    def __init__(self, g, launches=None, launch_nr=0):
         self.g = g
         if launches is None:
-            self.launches = list(self.g.info['launches']) #list
+            self.launches = list(self.g.info['launches'])  # list
         else:
             self.launches = launches
         self.launch_nr = launch_nr
-        self.weigth = 0
+        self.cost = sum([launch.compute_cost() for launch in self.launches])
 
     def __repr__(self):
         s = ""
@@ -17,6 +18,7 @@ class OurState:
             s += str(launch)
             s += "\n"
         return s
+
     def isa_goal_state(self):
         nr_pieces_on_air = sum([len(launch.pieces) for launch in self.launches])
         if len(self.g) == nr_pieces_on_air:
@@ -26,6 +28,13 @@ class OurState:
         else:
             return False
 
+    def __lt__(self, other):
+
+        try:
+            return self.cost < other.cost
+
+        except AttributeError:
+            return NotImplemented
 
     def get_sucessors(self):
         pieces_on_air = []
@@ -34,7 +43,7 @@ class OurState:
             pieces_on_air += [piece.piece_id for piece in launch.pieces]
 
         leftpieces = [piece for piece in list(self.g.nodes.keys()) if piece not in pieces_on_air]
-        if len(pieces_on_air)==0:
+        if len(pieces_on_air) == 0:
             valid_pieces = leftpieces
         else:
             air_neigh = []
@@ -43,7 +52,7 @@ class OurState:
             valid_pieces = [p for p in leftpieces if p in list(air_neigh)]
 
         succ = []
-        if (self.launch_nr + 1 < len(self.launches)):
+        if self.launch_nr + 1 < len(self.launches):
             sendLauches = copy.deepcopy(self.launches)
             s = OurState(self.g, sendLauches, self.launch_nr + 1)
             succ.append(s)
@@ -51,23 +60,15 @@ class OurState:
         for piece in valid_pieces:
             if self.launches[self.launch_nr].can_insert(self.g.nodes[piece].info['weight']):
                 sendLauches = copy.deepcopy(self.launches)
-                p = Piece(piece,self.g.nodes[piece].info['weight'])
+                p = Piece(piece, self.g.nodes[piece].info['weight'])
                 sendLauches[self.launch_nr].insert_piece(p)
-                s = OurState(self.g,sendLauches,self.launch_nr)
+                s = OurState(self.g, sendLauches, self.launch_nr)
                 succ.append(s)
-
-
         return succ
 
 
-    def __cmp__(self, other):
-        #if hasattr(other, 'number'):
-        pass
-
-
 class Piece():
-
-    def __init__(self, piece_id,weight):
+    def __init__(self, piece_id, weight):
         self.weight = weight
         self.piece_id = piece_id
 
@@ -80,8 +81,7 @@ class Piece():
 
 
 class Launch():
-
-    def __init__(self,date,max_payload,fixed_cost,variable_cost):
+    def __init__(self, date, max_payload, fixed_cost, variable_cost):
         self.date = date
         self.max_payload = float(max_payload)
         self.fixed_cost = float(fixed_cost)
@@ -89,23 +89,27 @@ class Launch():
         self.pieces = []
 
     def __repr__(self):
-        return ("%s,%s,%s,%s"%(self.date,self.max_payload,self.fixed_cost,self.variable_cost))
+        return "%s,%s,%s,%s" % (self.date, self.max_payload, self.fixed_cost, self.variable_cost)
 
     def __str__(self):
         s = ""
         s += str(self.date)
         for piece in self.pieces:
-           s = s + " " +piece.piece_id
+            s = s + " " + piece.piece_id
         return s
-    def compute_cost(self,pieces):
-        total_weight = sum([piece.weight for piece in self.pieces])
-        return (self.fixed_cost + self.variable_cost * total_weight)
 
-    def can_insert(self,weigth):
+    def compute_cost(self):
         total_weight = sum([piece.weight for piece in self.pieces])
-        return ((self.max_payload-total_weight)>weigth)
+        return self.fixed_cost + self.variable_cost * total_weight
 
-    def insert_piece(self,piece): # return True if sucess
+    def can_insert(self, weight):
+        total_weight = self.total_weight()
+        return (self.max_payload - total_weight) > weight
+
+    def total_weight(self):
+        return sum([piece.weight for piece in self.pieces])
+
+    def insert_piece(self, piece):  # return True if sucess
         total_weight = sum([p.weight for p in self.pieces])
         if total_weight + piece.weight < self.max_payload:
             self.pieces.append(piece)
