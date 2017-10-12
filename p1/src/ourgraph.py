@@ -6,18 +6,17 @@ import matplotlib.pyplot as plt
 
 class OurGraph:
 
-    def __init__(self):
-        self.nodes = {}
-        self.edges = []
-        self.info = {}
+    nodes = {}
+    edges = []
+    info = {}
 
     def __len__(self):
         return len(self.nodes)
     
     def add_edge(self,nodeA,nodeB,**kwargs):
         edge = Edge(nodeA,nodeB,**kwargs)
-        self.nodes[nodeA].neigh.append(edge)
-        self.nodes[nodeB].neigh.append(edge)
+        self.nodes[nodeA].neigh.append(self.nodes[nodeB])
+        self.nodes[nodeB].neigh.append(self.nodes[nodeA])
         self.edges.append(edge)
 
     def add_node(self,nodeId,**kwargs):

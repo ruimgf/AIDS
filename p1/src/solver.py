@@ -1,12 +1,13 @@
 import sys
-from unsearch import UniformedSearch
 from ourgraph import StructureGraph
 from queue import PriorityQueue
+from assemblyProb import OurState
 
 def main(args):
     G = StructureGraph.read_from_file(args[2])
     if args[1] == '-u':
-        s = StructureGraph(G,PriorityQueue())
+        s = OurState(G)
+        s.get_sucessors()
     elif args[1] == '-i':
         pass #informed search
     #G.draw_graph()
