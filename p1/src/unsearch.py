@@ -1,13 +1,11 @@
 from ourgraph import OurGraph
 from node import Node
-from queue import *
 
-
-class SearchState():
-    self.launch = None
-    self.pieces = []
+class SearchState:
 
     def __init__(self):
+        self.launch = None
+        self.pieces = []
         pass
 
     def isa_goal_state(self):
@@ -19,11 +17,14 @@ class SearchState():
     def apply_action(self,action):
         pass
 
-class UniformedSearch():
+    def __cmp__(self, other):
+        #if hasattr(other, 'number'):
+        pass
+
+class GeralSearch:
     """docstring for UniformedSearch."""
-    def __init__(self,structure_graph):
-        #self.search_tree = OurGraph()
-        #self.fringe = [Node(1,actionsPreformed=[])]
+    def __init__(self,structure_graph,fringe):
+        self.fringe = fringe
         self.structure_graph = structure_graph
 
     def init_search(self):

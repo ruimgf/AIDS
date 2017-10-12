@@ -6,9 +6,11 @@ import matplotlib.pyplot as plt
 
 class OurGraph:
 
-    nodes = {}
-    edges = []
-    info = {}
+    def __init__(self):
+        self.nodes = {}
+        self.edges = []
+        self.info = {}
+
     def __len__(self):
         return len(self.nodes)
     
