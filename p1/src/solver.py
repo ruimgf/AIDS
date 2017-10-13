@@ -1,7 +1,7 @@
 import sys
 from ourgraph import StructureGraph
 from queue import LifoQueue
-from queue import PriorityQueue
+from queue import *
 
 from assemblyProb import OurState
 from generalSearch import GeneralSearch
