@@ -14,9 +14,13 @@ class OurState:
 
     def __repr__(self):
         s = ""
+        total_cost = 0
         for launch in self.launches:
-            s += str(launch)
-            s += "\n"
+            if len(launch.pieces) != 0 :
+                s += str(launch)
+                s += "\n"
+                total_cost += launch.compute_cost()
+        s += str(total_cost)
         return s
 
     def isa_goal_state(self):
