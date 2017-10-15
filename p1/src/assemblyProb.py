@@ -100,7 +100,7 @@ class Launch():
         s += str(self.date)
         for piece in self.pieces:
             s = s + " " + piece.piece_id
-        return s
+        return s + " " + str(self.compute_cost())
 
     def compute_cost(self):
         total_weight = sum([piece.weight for piece in self.pieces])

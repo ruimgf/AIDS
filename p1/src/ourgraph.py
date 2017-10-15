@@ -61,7 +61,8 @@ class StructureGraph(OurGraph):
                     l = Launch(data[1],data[2],data[3],data[4])
                     launches.append(l)
                 else:
-                    raise Exception("Invalid file format")
+                    pass
+                    #raise Exception("Invalid file format")
 
         g.info['launches']=launches
         print("....Done")
