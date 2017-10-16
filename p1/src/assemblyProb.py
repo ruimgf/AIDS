@@ -108,14 +108,14 @@ class Launch():
 
     def can_insert(self, weight):
         total_weight = self.total_weight()
-        return (self.max_payload - total_weight) > weight
+        return (self.max_payload - total_weight) >= weight
 
     def total_weight(self):
         return sum([piece.weight for piece in self.pieces])
 
     def insert_piece(self, piece):  # return True if sucess
         total_weight = sum([p.weight for p in self.pieces])
-        if total_weight + piece.weight < self.max_payload:
+        if total_weight + piece.weight <= self.max_payload:
             self.pieces.append(piece)
             return True
         else:
