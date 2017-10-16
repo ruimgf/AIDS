@@ -53,7 +53,7 @@ class StructureGraph(OurGraph):
                 data = line.split()
                 if(line[0]=='V'): #vertice
                     vId,weight = data[0],data[1]
-                    g.add_node(vId,weight=float(weight))
+                    g.add_node(vId,piece=Piece(vId,float(weight)))
                 elif(line[0]=='E'): #edge
                     vId1,vId2 = data[1],data[2]
                     g.add_edge(vId1,vId2)
@@ -67,3 +67,15 @@ class StructureGraph(OurGraph):
         g.info['launches']=launches
         print("....Done")
         return g
+
+class Piece():
+    def __init__(self, piece_id, weight):
+        self.weight = weight
+        self.piece_id = piece_id
+
+    def __eq__(self, other):
+
+        if hasattr(other, 'piece_id'):
+            if self.piece_id == other.piece_id:
+                return True
+        return False

@@ -62,27 +62,13 @@ class OurState:
             succ.append(s)
 
         for piece in valid_pieces:
-            if self.launches[self.launch_nr].can_insert(self.g.nodes[piece].info['weight']):
+            if self.launches[self.launch_nr].can_insert(self.g.nodes[piece].info['piece'].weight):
                 sendLauches = copy.deepcopy(self.launches)
-                p = Piece(piece, self.g.nodes[piece].info['weight'])
+                p = self.g.nodes[piece].info['piece']
                 sendLauches[self.launch_nr].insert_piece(p)
                 s = OurState(self.g, sendLauches, self.launch_nr)
                 succ.append(s)
         return succ
-
-
-class Piece():
-    def __init__(self, piece_id, weight):
-        self.weight = weight
-        self.piece_id = piece_id
-
-    def __eq__(self, other):
-
-        if hasattr(other, 'piece_id'):
-            if self.piece_id == other.piece_id:
-                return True
-        return False
-
 
 class Launch():
     def __init__(self, date, max_payload, fixed_cost, variable_cost):
