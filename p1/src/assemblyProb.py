@@ -45,13 +45,10 @@ class Problem:
             op_piecesId = [p.piece_id for p in op.pieces]
             x = [p for p in pieces_on_air if p in op_piecesId]
             if len(x)==0:
-                op_clean.append(op)
-        op_clean2 = []
-        for op in op_clean:
-            if self.in_graph.connected_subset(op.get_pieces_ids() + pieces_on_air):
-                op_clean2.append(op)
+                if self.in_graph.connected_subset(op.get_pieces_ids() + pieces_on_air):
+                    op_clean.append(op)
 
-        return op_clean2
+        return op_clean
 
     def __repr__(self):
         return str(self.operations)
@@ -112,12 +109,13 @@ class OurState:
         return sum([l.max_payload for l in self.launches[self.launch_nr:]])
 
     def get_sucessors(self):
-        pieces_on_air = self.pieces_on_air()
+
         if self.launch_nr >= len(self.launches):
             return []
 
         if self.total_left_capacity() < self.left_weight():
             return []
+
         ops = self.problem.get_valid_operations(self.pieces_on_air(),self.launches[self.launch_nr].max_payload)
 
         succ = []
@@ -160,7 +158,10 @@ class Launch():
 
     def compute_cost(self):
         total_weight = sum([piece.weight for piece in self.pieces])
-        return self.fixed_cost + self.variable_cost * total_weight
+        if total_weight!=0:
+            return (self.fixed_cost + self.variable_cost * total_weight)
+        else:
+            return 0
 
     def can_insert(self, weight):
         total_weight = self.total_weight()
