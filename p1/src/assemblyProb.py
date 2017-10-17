@@ -35,10 +35,22 @@ class Problem:
         return OurState(self, copy.deepcopy(self.in_graph.info['launches']))
 
     def get_valid_operations(self, pieces_on_air, max_payload):
-        op = [x for x in self.operations if x.pay_load <= max_payload]
-        op = [x for x in op if y not in x for y in pieces_on_air]
+
+        ops = [x for x in self.operations if x.pay_load <= max_payload]
+        op_clean = []
+
+        for op in ops:
+            op_piecesId = [p.piece_id for p in op.pieces]
+
+
+            x = [p for p in pieces_on_air if p in op_piecesId]
+            if len(x)==0:
+                op_clean.append(op)
+
+
+
         #op = [x for x in op if self.in_graph.is_connected(x.pieces+pieces_on_air)]
-        return op
+        return op_clean
 
     def __repr__(self):
         return str(self.operations)
@@ -64,9 +76,11 @@ class OurState:
                 total_cost += launch.compute_cost()
         s += str(total_cost)
         return s
+        #return str(self.launches)
 
     def isa_goal_state(self):
         nr_pieces_on_air = len(self.pieces_on_air())
+
         if len(self.problem.in_graph) == nr_pieces_on_air:
             print(self)
             exit(0)
@@ -90,20 +104,23 @@ class OurState:
 
     def get_sucessors(self):
         pieces_on_air = self.pieces_on_air()
-
+        if self.launch_nr >= len(self.launches):
+            return []
         ops = self.problem.get_valid_operations(self.pieces_on_air(),self.launches[self.launch_nr].max_payload)
 
         succ = []
         if self.launch_nr + 1 < len(self.launches):
             sendLauches = copy.deepcopy(self.launches)
-            s = OurState(self.g, sendLauches, self.launch_nr + 1)
+            s = OurState(self.problem, sendLauches, self.launch_nr + 1)
             succ.append(s)
 
         for op in ops:
             sendLauches = copy.deepcopy(self.launches)
-            for piece in op.pieces
+
+            for piece in op.pieces:
                 sendLauches[self.launch_nr].insert_piece(piece)
-            s = OurState(self.g, sendLauches, self.launch_nr + 1)
+            #if self.launch_nr + 1 < len(self.launches):
+            s = OurState(self.problem, sendLauches, self.launch_nr + 1)
             succ.append(s)
 
         return succ
@@ -119,6 +136,7 @@ class Launch():
 
     def __repr__(self):
         return "%s,%s,%s,%s" % (self.date, self.max_payload, self.fixed_cost, self.variable_cost)
+        #return str(self.pieces)
 
     def __str__(self):
         s = ""
@@ -126,6 +144,7 @@ class Launch():
         for piece in self.pieces:
             s = s + " " + piece.piece_id
         return s + " " + str(self.compute_cost())
+        #return str(self.pieces)
 
     def compute_cost(self):
         total_weight = sum([piece.weight for piece in self.pieces])

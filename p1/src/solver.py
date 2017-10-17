@@ -19,7 +19,7 @@ def main(args):
     elif args[1] == '-i':
         pass #informed search
     #G.draw_graph()
-
+    print("no solution")
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         print("Usage solver.py [-u,-i] filename")
