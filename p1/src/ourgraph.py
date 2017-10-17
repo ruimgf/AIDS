@@ -111,10 +111,3 @@ class Piece():
     def __repr__(self):
         return str(self.piece_id)
 
-
-#TEST CODE
-
-G = StructureGraph.read_from_file('../testFiles/trivial1.txt')
-print(G.connected_subset(['V1', 'V2'])) #should be true
-print('======================')
-print(G.connected_subset(['V1', 'V3'])) # should be false

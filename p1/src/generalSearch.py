@@ -6,7 +6,7 @@ class GeneralSearch:
         self.open_list = queue
         self.problem = problem
         self.open_list.put(problem.get_initial_state())
-        
+
     def init_search(self):
 
         while not self.open_list.empty():
