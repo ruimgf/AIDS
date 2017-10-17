@@ -19,7 +19,7 @@ class Problem:
     def __init__(self, g):
 
         self.in_graph = g
-        launches = g.info['launches']
+        self.launches = g.info['launches']
         self.operations = []
         allIds = self.in_graph.nodes.keys()
         for i in range(1, len(self.in_graph) + 1):
@@ -30,12 +30,12 @@ class Problem:
                     pieces.append(self.in_graph.nodes[piece_id].info['piece'])
                 self.operations.append(Operation(pieces))
 
-        max_pay_load = max([launch.max_payload for launch in launches])
+        max_pay_load = max([launch.max_payload for launch in self.launches])
 
         self.operations = [x for x in self.operations if x.pay_load <= max_pay_load]
 
     def get_initial_state(self):
-        return OurState(self, copy.deepcopy(self.in_graph.info['launches']))
+        return OurState(self,[[] for x in range(len(self.launches))])
 
 
     def get_valid_operations(self, pieces_on_air, max_payload):
@@ -57,23 +57,27 @@ class Problem:
 
 
 class OurState:
-    def __init__(self, problem, launches=None, launch_nr=0):
+    def __init__(self, problem,pieces_list,launch_nr=0):
         self.problem = problem
-        if launches is None:
-            self.launches = list(self.g.info['launches'])  # list
-        else:
-            self.launches = launches
+        self.launches = list(self.problem.in_graph.info['launches'])
         self.launch_nr = launch_nr
-        self.cost = sum([launch.compute_cost() for launch in self.launches])
+        self.pieces_list = [[] for x in range(len(self.launches))]
+
+        for i in range(len(pieces_list)):
+            self.pieces_list[i] += pieces_list[i]
+
+        self.cost = sum([self.launches[i].compute_cost(self.pieces_list[i]) for i in range(len(self.launches))])
 
     def __repr__(self):
         s = ""
         total_cost = 0
+        i=0
         for launch in self.launches:
-            if len(launch.pieces) != 0:
-                s += str(launch)
+            if len(self.pieces_list[i]) != 0:
+                s += launch.get_str(self.pieces_list[i])
                 s += "\n"
-                total_cost += launch.compute_cost()
+                total_cost += launch.compute_cost(self.pieces_list[i])
+            i += 1
         s += str(total_cost)
         return s
         #return str(self.launches)
@@ -103,8 +107,8 @@ class OurState:
 
     def pieces_on_air(self):
         pieces_on_air = []
-        for launch in self.launches:
-            pieces_on_air += [piece.piece_id for piece in launch.pieces]
+        for pieces in self.pieces_list:
+            pieces_on_air += [piece.piece_id for piece in pieces]
         return pieces_on_air
 
     def total_left_capacity(self):
@@ -122,17 +126,17 @@ class OurState:
 
         succ = []
         if self.launch_nr + 1 < len(self.launches):
-            sendLauches = copy.deepcopy(self.launches)
-            s = OurState(self.problem, sendLauches, self.launch_nr + 1)
+            s = OurState(self.problem,self.pieces_list, self.launch_nr + 1)
             succ.append(s)
 
         for op in ops:
-            sendLauches = copy.deepcopy(self.launches)
+            lcopy = [[] for x in range(len(self.pieces_list))]
 
-            for piece in op.pieces:
-                sendLauches[self.launch_nr].insert_piece(piece)
-            #if self.launch_nr + 1 < len(self.launches):
-            s = OurState(self.problem, sendLauches, self.launch_nr + 1)
+            for i in range(len(lcopy)):
+                lcopy[i] += self.pieces_list[i].copy()
+
+            lcopy[self.launch_nr] += op.pieces
+            s = OurState(self.problem,lcopy, self.launch_nr + 1)
             succ.append(s)
 
         return succ
@@ -144,39 +148,24 @@ class Launch():
         self.max_payload = float(max_payload)
         self.fixed_cost = float(fixed_cost)
         self.variable_cost = float(variable_cost)
-        self.pieces = []
 
     def __repr__(self):
         return "%s,%s,%s,%s" % (self.date, self.max_payload, self.fixed_cost, self.variable_cost)
         #return str(self.pieces)
 
-    def __str__(self):
+    def get_str(self,pieces):
         s = ""
         s += str(self.date)
-        for piece in self.pieces:
+        for piece in pieces:
             s = s + " " + piece.piece_id
-        return s + " " + str(self.compute_cost())
-        #return str(self.pieces)
+        return s + " " + str(self.compute_cost(pieces))
 
-    def compute_cost(self):
-        total_weight = sum([piece.weight for piece in self.pieces])
+    def compute_cost(self,pieces):
+        total_weight = sum([piece.weight for piece in pieces])
         if total_weight !=0:
             return self.fixed_cost + self.variable_cost * total_weight
         else:
             return 0
 
-    def can_insert(self, weight):
-        total_weight = self.total_weight()
-        return (self.max_payload - total_weight) >= weight
-
-    def total_weight(self):
-        return sum([piece.weight for piece in self.pieces])
-
-    def insert_piece(self, piece):  # return True if sucess
-        total_weight = sum([p.weight for p in self.pieces])
-        if total_weight + piece.weight <= self.max_payload:
-            self.pieces.append(piece)
-            return True
-        else:
-            print("error inserted")
-            return False
+    def total_weight(self,pieces):
+        return sum([piece.weight for piece in pieces])
