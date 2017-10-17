@@ -10,9 +10,36 @@ class OurGraph:
     edges = []
     info = {}
 
+    #discovered is a dictionary of discovered nodes
+    #node_id is int of the current node
+    #node_set is a list of valid nodes in the graph
+    def DFS(self,discovered,node_id,node_set):
+
+        discovered[node_id] = True;
+        valid_neigh = [x.id_ for x in self.nodes[node_id].neigh if x.id_ in node_set]
+        #print(valid_neigh)
+        for element in valid_neigh:
+            if discovered[element] == False:
+                self.DFS(discovered,element,node_set)
+
+    #function that given a graph and a list of valid nodes to visti returns true if the subgraph is connected and false otherwise
+    def connected_subset(self,node_set):
+        discovered = {}
+        for element in node_set:
+            discovered[element] = False;
+
+        self.DFS(discovered,node_set[0],node_set)
+
+        #print(discovered)
+        for element in discovered:
+            if discovered[element] == False:
+                return False
+
+        return True
+
     def __len__(self):
         return len(self.nodes)
-    
+
     def add_edge(self,nodeA,nodeB,**kwargs):
         edge = Edge(nodeA,nodeB,**kwargs)
         self.nodes[nodeA].neigh.append(self.nodes[nodeB])
@@ -83,3 +110,11 @@ class Piece():
         return str(self.piece_id)
     def __repr__(self):
         return str(self.piece_id)
+
+
+#TEST CODE
+
+G = StructureGraph.read_from_file('../testFiles/trivial1.txt')
+print(G.connected_subset(['V1', 'V2'])) #should be true
+print('======================')
+print(G.connected_subset(['V1', 'V3'])) # should be false
