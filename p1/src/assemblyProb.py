@@ -10,8 +10,10 @@ class Operation:
 
     def __repr__(self):
         return str(self.pieces)
+
     def get_pieces_ids(self):
         return [p.piece_id for p in self.pieces]
+
 
 class Problem:
     def __init__(self, g):
@@ -158,8 +160,8 @@ class Launch():
 
     def compute_cost(self):
         total_weight = sum([piece.weight for piece in self.pieces])
-        if total_weight!=0:
-            return (self.fixed_cost + self.variable_cost * total_weight)
+        if total_weight !=0:
+            return self.fixed_cost + self.variable_cost * total_weight
         else:
             return 0
 
@@ -176,4 +178,5 @@ class Launch():
             self.pieces.append(piece)
             return True
         else:
+            print("error inserted")
             return False

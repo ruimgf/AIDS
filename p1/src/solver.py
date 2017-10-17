@@ -18,7 +18,7 @@ def main(args):
         f.init_search()
     elif args[1] == '-i':
         pass #informed search
-    #G.draw_graph()
+
     print("no solution")
 if __name__ == '__main__':
     if len(sys.argv) < 3:
