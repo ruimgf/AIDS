@@ -1,7 +1,7 @@
 from node import Node
 import copy
 import itertools
-
+import sys
 
 class Operation:
     def __init__(self, pieces):
@@ -23,7 +23,7 @@ class Problem:
         self.operations = []
         allIds = self.in_graph.nodes.keys()
         for i in range(1, len(self.in_graph) + 1):
-            combinations = list(itertools.combinations(allIds, i))
+            combinations = itertools.combinations(allIds, i)
             for combination in combinations:
                 pieces = []
                 for piece_id in list(combination):
@@ -83,7 +83,7 @@ class OurState:
 
         if len(self.problem.in_graph) == nr_pieces_on_air:
             print(self)
-            exit(0)
+            sys.exit(0)
             return True
         else:
             return False
