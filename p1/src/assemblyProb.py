@@ -1,6 +1,38 @@
 from node import Node
 import copy
+import itertools
 
+class Operation:
+    def __init__(self,pieces):
+        self.pieces = pieces
+        self.pay_load = sum([piece.weight for piece in self.pieces])
+
+    def __repr__(self):
+        return str(self.pieces)
+
+class Problem:
+
+    def __init__(self,g):
+
+       self.in_graph = g
+       launches = g.info['launches']
+       self.operations = []
+       allIds = self.in_graph.nodes.keys()
+       for i in range(1,len(self.in_graph)+1):
+           combinations = list(itertools.combinations(allIds,i))
+           for combination in combinations:
+               pieces = []
+               for piece_id in list(combination):
+                   pieces.append(self.in_graph.nodes[piece_id].info['piece'])
+               self.operations.append(Operation(pieces))
+
+               
+       max_pay_load = max([launch.max_payload for launch in launches])
+       #filtered operations
+       self.operations = [x for x in self.operations if x.pay_load <= max_pay_load]
+       print("len = =",len(self.operations))
+    def __repr__(self):
+        return str(self.operations)
 
 class OurState:
     def __init__(self, g, launches=None, launch_nr=0):
@@ -42,32 +74,24 @@ class OurState:
 
     def get_sucessors(self):
         pieces_on_air = []
-
+        #substituir por grafo de peças no ar
         for launch in self.launches:
             pieces_on_air += [piece.piece_id for piece in launch.pieces]
 
         leftpieces = [piece for piece in list(self.g.nodes.keys()) if piece not in pieces_on_air]
-        if len(pieces_on_air) == 0:
-            valid_pieces = leftpieces
-        else:
-            air_neigh = []
-            for piece in pieces_on_air:
-                air_neigh += [p.id_ for p in self.g.nodes[piece].neigh]
-            valid_pieces = [p for p in leftpieces if p in list(air_neigh)]
 
+        #ir buscar as operações válidas
+
+        #esta vai ser sempre possivel
         succ = []
         if self.launch_nr + 1 < len(self.launches):
             sendLauches = copy.deepcopy(self.launches)
             s = OurState(self.g, sendLauches, self.launch_nr + 1)
             succ.append(s)
 
-        for piece in valid_pieces:
-            if self.launches[self.launch_nr].can_insert(self.g.nodes[piece].info['piece'].weight):
-                sendLauches = copy.deepcopy(self.launches)
-                p = self.g.nodes[piece].info['piece']
-                sendLauches[self.launch_nr].insert_piece(p)
-                s = OurState(self.g, sendLauches, self.launch_nr)
-                succ.append(s)
+        #gerar os nós com base nas operações válidas
+
+
         return succ
 
 class Launch():

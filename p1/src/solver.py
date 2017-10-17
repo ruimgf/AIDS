@@ -3,10 +3,13 @@ from ourgraph import StructureGraph
 from queue import LifoQueue
 from queue import *
 
-from assemblyProb import OurState
+
+from assemblyProb import OurState, Problem
 from generalSearch import GeneralSearch
 def main(args):
     G = StructureGraph.read_from_file(args[2])
+    p = Problem(G)
+    print(p)
     if args[1] == '-u':
         q = PriorityQueue()
         #q = LifoQueue()

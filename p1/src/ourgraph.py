@@ -79,3 +79,7 @@ class Piece():
             if self.piece_id == other.piece_id:
                 return True
         return False
+    def __str__(self):
+        return str(self.piece_id)
+    def __repr__(self):
+        return str(self.piece_id)
