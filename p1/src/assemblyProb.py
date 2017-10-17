@@ -2,41 +2,51 @@ from node import Node
 import copy
 import itertools
 
+
 class Operation:
-    def __init__(self,pieces):
+    def __init__(self, pieces):
         self.pieces = pieces
         self.pay_load = sum([piece.weight for piece in self.pieces])
 
     def __repr__(self):
         return str(self.pieces)
 
+
 class Problem:
+    def __init__(self, g):
 
-    def __init__(self,g):
+        self.in_graph = g
+        launches = g.info['launches']
+        self.operations = []
+        allIds = self.in_graph.nodes.keys()
+        for i in range(1, len(self.in_graph) + 1):
+            combinations = list(itertools.combinations(allIds, i))
+            for combination in combinations:
+                pieces = []
+                for piece_id in list(combination):
+                    pieces.append(self.in_graph.nodes[piece_id].info['piece'])
+                self.operations.append(Operation(pieces))
 
-       self.in_graph = g
-       launches = g.info['launches']
-       self.operations = []
-       allIds = self.in_graph.nodes.keys()
-       for i in range(1,len(self.in_graph)+1):
-           combinations = list(itertools.combinations(allIds,i))
-           for combination in combinations:
-               pieces = []
-               for piece_id in list(combination):
-                   pieces.append(self.in_graph.nodes[piece_id].info['piece'])
-               self.operations.append(Operation(pieces))
+        max_pay_load = max([launch.max_payload for launch in launches])
 
-               
-       max_pay_load = max([launch.max_payload for launch in launches])
-       #filtered operations
-       self.operations = [x for x in self.operations if x.pay_load <= max_pay_load]
-       print("len = =",len(self.operations))
+        self.operations = [x for x in self.operations if x.pay_load <= max_pay_load]
+
+    def get_initial_state(self):
+        return OurState(self, copy.deepcopy(self.in_graph.info['launches']))
+
+    def get_valid_operations(self, pieces_on_air, max_payload):
+        op = [x for x in self.operations if x.pay_load <= max_payload]
+        op = [x for x in op if y not in x for y in pieces_on_air]
+        #op = [x for x in op if self.in_graph.is_connected(x.pieces+pieces_on_air)]
+        return op
+
     def __repr__(self):
         return str(self.operations)
 
+
 class OurState:
-    def __init__(self, g, launches=None, launch_nr=0):
-        self.g = g
+    def __init__(self, problem, launches=None, launch_nr=0):
+        self.problem = problem
         if launches is None:
             self.launches = list(self.g.info['launches'])  # list
         else:
@@ -48,7 +58,7 @@ class OurState:
         s = ""
         total_cost = 0
         for launch in self.launches:
-            if len(launch.pieces) != 0 :
+            if len(launch.pieces) != 0:
                 s += str(launch)
                 s += "\n"
                 total_cost += launch.compute_cost()
@@ -56,8 +66,8 @@ class OurState:
         return s
 
     def isa_goal_state(self):
-        nr_pieces_on_air = sum([len(launch.pieces) for launch in self.launches])
-        if len(self.g) == nr_pieces_on_air:
+        nr_pieces_on_air = len(self.pieces_on_air())
+        if len(self.problem.in_graph) == nr_pieces_on_air:
             print(self)
             exit(0)
             return True
@@ -72,27 +82,32 @@ class OurState:
         except AttributeError:
             return NotImplemented
 
-    def get_sucessors(self):
+    def pieces_on_air(self):
         pieces_on_air = []
-        #substituir por grafo de peças no ar
         for launch in self.launches:
             pieces_on_air += [piece.piece_id for piece in launch.pieces]
+        return pieces_on_air
 
-        leftpieces = [piece for piece in list(self.g.nodes.keys()) if piece not in pieces_on_air]
+    def get_sucessors(self):
+        pieces_on_air = self.pieces_on_air()
 
-        #ir buscar as operações válidas
+        ops = self.problem.get_valid_operations(self.pieces_on_air(),self.launches[self.launch_nr].max_payload)
 
-        #esta vai ser sempre possivel
         succ = []
         if self.launch_nr + 1 < len(self.launches):
             sendLauches = copy.deepcopy(self.launches)
             s = OurState(self.g, sendLauches, self.launch_nr + 1)
             succ.append(s)
 
-        #gerar os nós com base nas operações válidas
-
+        for op in ops:
+            sendLauches = copy.deepcopy(self.launches)
+            for piece in op.pieces
+                sendLauches[self.launch_nr].insert_piece(piece)
+            s = OurState(self.g, sendLauches, self.launch_nr + 1)
+            succ.append(s)
 
         return succ
+
 
 class Launch():
     def __init__(self, date, max_payload, fixed_cost, variable_cost):
