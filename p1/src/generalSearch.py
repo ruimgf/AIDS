@@ -19,4 +19,4 @@ class GeneralSearch:
                 for element in l:
                     self.open_list.put(element)
             
-        return None
+        return "0"
