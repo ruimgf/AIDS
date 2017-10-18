@@ -15,7 +15,8 @@ def main(args):
         #q = LifoQueue()
         #q = Queue()
         f = GeneralSearch(Problem(G), q)
-        f.init_search()
+        return(f.init_search())
+
     elif args[1] == '-i':
         pass #informed search
 
@@ -24,4 +25,4 @@ if __name__ == '__main__':
     if len(sys.argv) < 3:
         print("Usage solver.py [-u,-i] filename")
         exit(-1)
-    main(sys.argv)
+    print(main(sys.argv))

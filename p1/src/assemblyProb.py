@@ -66,7 +66,7 @@ class OurState:
         for i in range(len(pieces_list)):
             self.pieces_list[i] += pieces_list[i]
 
-        self.cost = sum([self.launches[i].compute_cost(self.pieces_list[i]) for i in range(len(self.launches))])
+        self.cost = sum([self.launches[i].compute_cost(self.pieces_list[i]) for i in range(len(self.launches))])# + self.left_weight()
 
     def __repr__(self):
         s = ""
@@ -78,7 +78,7 @@ class OurState:
                 s += "\n"
                 total_cost += launch.compute_cost(self.pieces_list[i])
             i += 1
-        s += str(total_cost)
+        s += ("%.6f")%(total_cost)
         return s
         #return str(self.launches)
 
@@ -86,8 +86,6 @@ class OurState:
         nr_pieces_on_air = len(self.pieces_on_air())
 
         if len(self.problem.in_graph) == nr_pieces_on_air:
-            print(self)
-            sys.exit(0)
             return True
         else:
             return False
@@ -155,10 +153,10 @@ class Launch():
 
     def get_str(self,pieces):
         s = ""
-        s += str(self.date)
+        s += str(self.date + "  ")
         for piece in pieces:
             s = s + " " + piece.piece_id
-        return s + " " + str(self.compute_cost(pieces))
+        return s + "  " + ("%.6f")%self.compute_cost(pieces)
 
     def compute_cost(self,pieces):
         total_weight = sum([piece.weight for piece in pieces])

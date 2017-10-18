@@ -6,13 +6,14 @@ from assemblyProb import Launch
 
 class OurGraph:
 
-    nodes = {}
-    edges = []
-    info = {}
-
+    def __init__(self):
+        self.nodes = {}
+        self.edges = []
+        self.info = {}
     #discovered is a dictionary of discovered nodes
     #node_id is int of the current node
     #node_set is a list of valid nodes in the graph
+
     def DFS(self,discovered,node_id,node_set):
 
         discovered[node_id] = True;
@@ -68,10 +69,14 @@ class StructureGraph(OurGraph):
     """docstring for StructureGraph."""
     def __init__(self):
         super(OurGraph, self).__init__()
+        self.nodes = {}
+        self.edges = []
+        self.info = {}
+
 
     @staticmethod
     def read_from_file(filename):
-        print("Loading Graph from file.......",end='')
+
         g = StructureGraph()
         launches = []
         with open(filename, 'r')  as f:
@@ -92,7 +97,7 @@ class StructureGraph(OurGraph):
                     #raise Exception("Invalid file format")
 
         g.info['launches']=launches
-        print("....Done")
+
         return g
 
 class Piece():
