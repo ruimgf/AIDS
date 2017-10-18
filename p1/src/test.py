@@ -23,6 +23,11 @@ class TestSolver(unittest.TestCase):
         "trivial2.txt [uniformedSearch]"
         self.t("trivial2")
 
+    @unittest.skip("skipping mir")
+    def test_uniformed_mir(self):
+        "mir.txt [uniformedSearch]"
+        self.t("mir")
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=3)

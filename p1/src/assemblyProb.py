@@ -66,7 +66,7 @@ class OurState:
         for i in range(len(pieces_list)):
             self.pieces_list[i] += pieces_list[i]
 
-        self.cost = sum([self.launches[i].compute_cost(self.pieces_list[i]) for i in range(len(self.launches))])# + self.left_weight()
+        self.cost = sum([self.launches[i].compute_cost(self.pieces_list[i]) for i in range(len(self.launches))])     + self.left_weight()
 
     def __repr__(self):
         s = ""
