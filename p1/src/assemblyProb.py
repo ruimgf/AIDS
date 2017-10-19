@@ -51,7 +51,7 @@ class Problem:
 
 
 class OurState:
-    
+
     def __init__(self, problem,pieces_list,launch_nr=0):
         self.problem = problem
         self.launches = list(self.problem.in_graph.info['launches'])

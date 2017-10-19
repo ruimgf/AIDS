@@ -10,12 +10,11 @@ class OurGraph:
         self.nodes = {}
         self.edges = []
         self.info = {}
-
-    # discovered is a dictionary of discovered nodes
-    # node_id is int of the current node
-    # node_set is a list of valid nodes in the graph
-
-    def DFS(self, discovered, node_id, node_set):
+        
+    #discovered is a dictionary of discovered nodes
+    #node_id is int of the current node
+    #node_set is a list of valid nodes in the graph
+    def DFS(self,discovered,node_id,node_set):
 
         discovered[node_id] = True;
         valid_neigh = [x.id_ for x in self.nodes[node_id].neigh if x.id_ in node_set]
@@ -72,7 +71,6 @@ class OurGraph:
 
 class StructureGraph(OurGraph):
     """docstring for StructureGraph."""
-
     def __init__(self):
         super(OurGraph, self).__init__()
         self.nodes = {}
@@ -100,6 +98,5 @@ class StructureGraph(OurGraph):
                 else:
                     pass
 
-        g.info['launches'] = launches
 
         return g
