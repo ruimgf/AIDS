@@ -98,5 +98,5 @@ class StructureGraph(OurGraph):
                 else:
                     pass
 
-
+        g.info['launches'] = launches
         return g
