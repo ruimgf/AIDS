@@ -1,4 +1,3 @@
-import sys
 class GeneralSearch:
     """docstring forUniformedSearch."""
 
