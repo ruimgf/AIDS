@@ -39,7 +39,9 @@ class Problem:
 
         for op in ops:
             op_pieces_id = op.pieces
-            x = [p for p in pieces_on_air if p in op_pieces_id]
+            set_air = set(pieces_on_air)
+            x = set_air.intersection(set(op_pieces_id))
+
             if len(x) == 0:
                 if self.in_graph.connected_subset(op.pieces + pieces_on_air):
                     op_clean.append(op)
@@ -52,16 +54,20 @@ class Problem:
 
 class OurState:
 
-    def __init__(self, problem,pieces_list,launch_nr=0):
+    def __init__(self, problem,pieces_list,launch_nr=0,cost_launch=None):
         self.problem = problem
         self.launches = list(self.problem.in_graph.info['launches'])
         self.launch_nr = launch_nr
         self.pieces_list = [[] for x in range(len(self.launches))]
-        self.cost_launch = [0 for x in range(len(self.launches))]
+
+        if cost_launch is None:
+            self.cost_launch = [0 for x in range(len(self.launches))]
+        else:
+            self.cost_launch = cost_launch
+
         for i in range(len(pieces_list)):
             self.pieces_list[i] += pieces_list[i]
-            self.cost_launch[i] = self.launches[i].compute_cost(sum(self.problem.in_graph.nodes[x].info['weight'] for x in self.pieces_list[i]))
-        self.cost = sum(self.cost_launch)
+        self.cost = sum(self.cost_launch)# + self.left_weight()
 
     def __repr__(self):
         s = ""
@@ -119,7 +125,9 @@ class OurState:
 
         succ = []
         if self.launch_nr + 1 < len(self.launches):
-            s = OurState(self.problem, self.pieces_list, self.launch_nr + 1)
+            costs = self.cost_launch.copy()
+            costs[self.launch_nr] = 0
+            s = OurState(self.problem, self.pieces_list, self.launch_nr + 1,costs)
             succ.append(s)
 
         for op in ops:
@@ -129,7 +137,9 @@ class OurState:
                 lcopy[i] += self.pieces_list[i].copy()
 
             lcopy[self.launch_nr] += op.pieces
-            s = OurState(self.problem,lcopy, self.launch_nr + 1)
+            costs = self.cost_launch.copy()
+            costs[self.launch_nr] = self.launches[self.launch_nr].compute_cost(op.pay_load)
+            s = OurState(self.problem,lcopy, self.launch_nr + 1,costs)
             succ.append(s)
 
         return succ
@@ -147,7 +157,7 @@ class Launch:
 
     def get_str(self, pieces, cost):
         s = ""
-        s += str(self.date) + "  "
+        s += self.date.strftime('%d%M%Y') + "  "
         for piece in pieces:
             s = s + " " + piece
         return s + "  " + "%.6f" % cost

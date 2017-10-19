@@ -2,9 +2,9 @@ import sys
 from ourgraph import StructureGraph
 from queue import *
 
-
 from assemblyProb import Problem
 from generalSearch import GeneralSearch
+
 
 def main(args):
     G = StructureGraph.read_from_file(args[2])
@@ -20,7 +20,9 @@ def main(args):
 
 if __name__ == '__main__':
 
+
     if len(sys.argv) < 3:
         print("Usage solver.py [-u,-i] filename")
         exit(-1)
     print(main(sys.argv))
+

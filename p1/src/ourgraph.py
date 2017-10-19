@@ -37,7 +37,7 @@ class OurGraph:
 
         # print(discovered)
         for element in discovered:
-            if discovered[element] == False:
+            if not discovered[element]:
                 return False
 
         return True
@@ -45,13 +45,13 @@ class OurGraph:
     def __len__(self):
         return len(self.nodes)
 
-    def add_edge(self, nodeA, nodeB, **kwargs):
+    def add_edge(self, nodeA , nodeB , **kwargs):
         edge = Edge(nodeA, nodeB, **kwargs)
         self.nodes[nodeA].neigh.append(self.nodes[nodeB])
         self.nodes[nodeB].neigh.append(self.nodes[nodeA])
         self.edges.append(edge)
 
-    def add_node(self, nodeId, **kwargs):
+    def add_node(self, nodeId , **kwargs):
         if nodeId not in self.nodes.keys():
             self.nodes[nodeId] = Node(nodeId, **kwargs)
         else:
