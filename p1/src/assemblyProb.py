@@ -147,7 +147,7 @@ class Launch:
 
     def get_str(self, pieces, cost):
         s = ""
-        s += str(self.date + "  ")
+        s += str(self.date) + "  "
         for piece in pieces:
             s = s + " " + piece
         return s + "  " + "%.6f" % cost

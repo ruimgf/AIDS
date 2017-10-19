@@ -89,7 +89,7 @@ class StructureGraph(OurGraph):
             for line in lines:
                 data = line.split()
                 if(line[0]=='V'): #vertice
-                    vetice = (data[0],data[1])
+                    vertice = (data[0],float(data[1]))
                     vertices.append(vertice)
                 elif(line[0]=='E'): #edge
                     edge= (data[1],data[2])
@@ -99,8 +99,8 @@ class StructureGraph(OurGraph):
                     dia = int(''.join(data_date[0:2]))
                     mes = int(''.join(data_date[2:4]))
                     ano = int(''.join(data_date[4:]))
-                    data_date = (ano,mes,dia)
-                    l = Launch(data[1],data[2],data[3],data_date)
+                    data_date = date(ano, mes, dia)
+                    l = Launch(data_date, data[2], data[3], data[4])
                     launches.append(l)
                 else:
                     pass
