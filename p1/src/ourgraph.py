@@ -10,10 +10,10 @@ class OurGraph:
         self.nodes = {}
         self.edges = []
         self.info = {}
+        
     #discovered is a dictionary of discovered nodes
     #node_id is int of the current node
     #node_set is a list of valid nodes in the graph
-
     def DFS(self,discovered,node_id,node_set):
 
         discovered[node_id] = True;
@@ -117,4 +117,3 @@ class Piece():
 
     def __repr__(self):
         return str(self.piece_id)
-
