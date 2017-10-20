@@ -21,7 +21,7 @@ class OurGraph:
         for element in valid_neigh:
             if discovered[element] == False:
                 self.DFS(discovered, element, node_set)
-                self.DFS(discovered,element,node_set)
+                #self.DFS(discovered, element,node_set)
 
     """
     function that given a graph and a list of valid nodes 
@@ -31,7 +31,7 @@ class OurGraph:
     def connected_subset(self, node_set):
         discovered = {}
         for element in node_set:
-            discovered[element] = False;
+            discovered[element] = False
 
         self.DFS(discovered,node_set[0],node_set)
 
