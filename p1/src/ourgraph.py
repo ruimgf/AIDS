@@ -21,7 +21,6 @@ class OurGraph:
         for element in valid_neigh:
             if discovered[element] == False:
                 self.DFS(discovered, element, node_set)
-                #self.DFS(discovered, element,node_set)
 
     """
     function that given a graph and a list of valid nodes 

@@ -19,21 +19,30 @@ class Problem:
         self.launches = g.info['launches']
         self.operations = []
         allIds = self.in_graph.nodes.keys()
-        max_pay_load = max([launch.max_payload for launch in self.launches])
+        self.max_pay_load = max([launch.max_payload for launch in self.launches])
 
         for i in range(1, len(self.in_graph) + 1):
             combinations = itertools.combinations(allIds, i)
             for combination in combinations:
                 total_weight = sum([g.nodes[x].info['weight'] for x in list(combination)])
-                if total_weight <= max_pay_load:
+                if total_weight <= self.max_pay_load:
                     self.operations.append(Operation(list(combination), total_weight))
 
     def get_initial_state(self):
         return OurState(self,[[] for x in range(len(self.launches))])
 
     def get_valid_operations(self, pieces_on_air, max_payload):
-        set_air = set(pieces_on_air)
-        ops = [x for x in self.operations if x.pay_load <= max_payload and len(set_air.intersection(set(x.pieces))) == 0 and self.in_graph.connected_subset(list(x.pieces) + pieces_on_air)]
+        set_air = pieces_on_air
+        left_pieces = [x for x in self.in_graph.nodes.keys() if x not in pieces_on_air]
+        ops = []
+        for i in range(1, len(left_pieces) + 1):
+            combinations = itertools.combinations(left_pieces, i)
+            for combination in combinations:
+                total_weight = sum([self.in_graph.nodes[x].info['weight'] for x in list(combination)])
+                if total_weight <= max_payload:
+                    ops.append(Operation(list(combination), total_weight))
+
+        ops = [x for x in ops if self.in_graph.connected_subset(list(x.pieces) + pieces_on_air)]
         return ops
 
     def __repr__(self):
