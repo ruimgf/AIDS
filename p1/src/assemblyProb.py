@@ -19,34 +19,22 @@ class Problem:
         self.launches = g.info['launches']
         self.operations = []
         allIds = self.in_graph.nodes.keys()
+        max_pay_load = max([launch.max_payload for launch in self.launches])
 
         for i in range(1, len(self.in_graph) + 1):
             combinations = itertools.combinations(allIds, i)
             for combination in combinations:
                 total_weight = sum([g.nodes[x].info['weight'] for x in list(combination)])
-                self.operations.append(Operation(list(combination), total_weight))
-
-        max_pay_load = max([launch.max_payload for launch in self.launches])
-
-        self.operations = [x for x in self.operations if x.pay_load <= max_pay_load]
+                if total_weight <= max_pay_load:
+                    self.operations.append(Operation(list(combination), total_weight))
 
     def get_initial_state(self):
         return OurState(self,[[] for x in range(len(self.launches))])
 
     def get_valid_operations(self, pieces_on_air, max_payload):
-        ops = [x for x in self.operations if x.pay_load <= max_payload]
-        op_clean = []
-
-        for op in ops:
-            op_pieces_id = op.pieces
-            set_air = set(pieces_on_air)
-            x = set_air.intersection(set(op_pieces_id))
-
-            if len(x) == 0:
-                if self.in_graph.connected_subset(op.pieces + pieces_on_air):
-                    op_clean.append(op)
-
-        return op_clean
+        set_air = set(pieces_on_air)
+        ops = [x for x in self.operations if x.pay_load <= max_payload and len(set_air.intersection(set(x.pieces))) == 0 and self.in_graph.connected_subset(list(x.pieces) + pieces_on_air)]
+        return ops
 
     def __repr__(self):
         return str(self.operations)
@@ -58,16 +46,14 @@ class OurState:
         self.problem = problem
         self.launches = list(self.problem.in_graph.info['launches'])
         self.launch_nr = launch_nr
-        self.pieces_list = [[] for x in range(len(self.launches))]
+        self.pieces_list = pieces_list
 
         if cost_launch is None:
             self.cost_launch = [0 for x in range(len(self.launches))]
         else:
             self.cost_launch = cost_launch
 
-        for i in range(len(pieces_list)):
-            self.pieces_list[i] += pieces_list[i]
-        self.cost = sum(self.cost_launch)# + self.left_weight()
+        self.cost = sum(self.cost_launch)
 
     def __repr__(self):
         s = ""
@@ -121,7 +107,7 @@ class OurState:
         if self.total_left_capacity() < self.left_weight():
             return []
 
-        ops = self.problem.get_valid_operations(self.pieces_on_air(),self.launches[self.launch_nr].max_payload)
+        ops = self.problem.get_valid_operations(self.pieces_on_air(), self.launches[self.launch_nr].max_payload)
 
         succ = []
         if self.launch_nr + 1 < len(self.launches):
