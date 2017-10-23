@@ -1,7 +1,7 @@
 from node import Node
 from edge import Edge
-import networkx as nx  # só usado para desenhar o grafo
-import matplotlib.pyplot as plt
+#import networkx as nx  # só usado para desenhar o grafo
+#import matplotlib.pyplot as plt
 from assemblyProb import Launch
 from datetime import date
 
@@ -55,14 +55,14 @@ class OurGraph:
             self.nodes[nodeId] = Node(nodeId, **kwargs)
         else:
             raise ValueError('NodeId already exists in Graph')
-
+    """
     def draw_graph(self):
         G = nx.Graph()
         for edge in self.edges:
             G.add_edge(edge.nodeA, edge.nodeB)
         nx.draw(G, with_labels=True, font_weight='bold')
         plt.show()
-
+    """
     @staticmethod
     def read_from_file(filename):
         pass
