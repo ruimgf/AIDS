@@ -138,7 +138,7 @@ class OurState:
         if len(self.pieces_on_air) != len(other.pieces_on_air):
             return False
         intersect = set(self.pieces_on_air).intersection(set(other.pieces_on_air))
-        if len(intersect) == len(other.pieces_on_air):
+        if len(intersect) == len(other.pieces_on_air) and len(intersect) == len(self.pieces_on_air):
             return True
         return False
 
