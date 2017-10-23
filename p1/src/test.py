@@ -34,7 +34,7 @@ class TestSolver(unittest.TestCase):
 
     def test_informed_trivial1(self):
         "trivial1.txt [informedSearch]"
-        self.t("trivial1","-u")
+        self.t("trivial1","-i")
 
     def test_informed_trivial2(self):
         "trivial2.txt [informedSearch]"
@@ -45,6 +45,31 @@ class TestSolver(unittest.TestCase):
         "mir.txt [informedSearch]"
         self.t("mir","-i")
 
+    def test_uniformed_t0(self):
+        "t0.txt [uniformedSearch]"
+        self.t("t0","-u")
+
+    def test_uniformed_t1(self):
+        "t1.txt [uniformedSearch]"
+        self.t("t1","-u")
+
+    def test_uniformed_t2(self):
+        "t2.txt [uniformedSearch]"
+        self.t("t2","-u")
+
+    def test_uniformed_t3(self):
+        "t3.txt [uniformedSearch]"
+        self.t("t3","-u")
+
+    def test_uniformed_t4(self):
+        "t4.txt [uniformedSearch]"
+        self.t("t4","-u")
+
+    def test_uniformed_t5(self):
+        "t5.txt [uniformedSearch]"
+        self.t("t5","-u")
+
 
 if __name__ == '__main__':
-    unittest.main(verbosity=3)
+
+     unittest.main(verbosity=3)

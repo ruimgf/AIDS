@@ -138,7 +138,7 @@ class OurState:
         if len(self.pieces_on_air) != len(other.pieces_on_air):
             return False
         intersect = set(self.pieces_on_air).intersection(set(other.pieces_on_air))
-        if len(intersect) == len(other.pieces_on_air):
+        if len(intersect) == len(other.pieces_on_air) and len(intersect) == len(self.pieces_on_air):
             return True
         return False
 
@@ -159,7 +159,10 @@ class OurState:
         if self.launch_nr + 1 < len(self.launches):
             costs = self.cost_launch.copy()
             costs[self.launch_nr] = 0
-            s = OurState(self.problem, self.pieces_list, self.launch_nr + 1,costs)
+            lcopy = [[] for x in range(len(self.pieces_list))]
+            for i in range(len(lcopy)):
+                lcopy[i] += self.pieces_list[i].copy()
+            s = OurState(self.problem, lcopy, self.launch_nr + 1,costs)
             succ.append(s)
 
         for op in ops:

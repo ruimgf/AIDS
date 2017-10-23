@@ -19,7 +19,6 @@ def main(args):
     return f.init_search()
 if __name__ == '__main__':
 
-
     if len(sys.argv) < 3:
         print("Usage solver.py [-u,-i] filename")
         exit(-1)
