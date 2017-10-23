@@ -62,6 +62,9 @@ def heur_cost_per_kg(state):
 def heur_left_weight(state):
     return state.left_weight()
 
+def heur_cena(state):
+    return min([launch.compute_cost(state.left_weight()) for launch in state.launches[state.launch_nr:]])
+
 class OurState:
 
     def __init__(self, problem,pieces_list,launch_nr=0,cost_launch=None):

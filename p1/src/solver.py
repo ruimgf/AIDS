@@ -2,7 +2,7 @@ import sys
 from ourgraph import StructureGraph
 from queue import *
 
-from assemblyProb import Problem,heur_cost_per_kg, heur_left_weight
+from assemblyProb import Problem,heur_cost_per_kg, heur_left_weight,heur_cena
 from generalSearch import GeneralSearch
 
 
@@ -12,7 +12,7 @@ def main(args):
     if args[1] == '-u':
         p = Problem(g)
     elif args[1] == '-i':
-        p = Problem(g, heur_left_weight)
+        p = Problem(g, heur_cena)
 
     q = PriorityQueue()
     f = GeneralSearch(p, q)
