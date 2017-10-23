@@ -69,6 +69,9 @@ class OurState:
         self.launches = list(self.problem.in_graph.info['launches'])
         self.launch_nr = launch_nr
         self.pieces_list = pieces_list
+        self.pieces_on_air = []
+        for pieces in self.pieces_list:
+            self.pieces_on_air += pieces
 
         if cost_launch is None:
             self.cost_launch = [0 for x in range(len(self.launches))]
@@ -95,7 +98,7 @@ class OurState:
 
 
     def isa_goal_state(self):
-        nr_pieces_on_air = len(self.pieces_on_air())
+        nr_pieces_on_air = len(self.pieces_on_air)
 
         if len(self.problem.in_graph) == nr_pieces_on_air:
             return True
@@ -103,7 +106,7 @@ class OurState:
             return False
 
     def left_weight(self):
-        pieces_on_air = self.pieces_on_air()
+        pieces_on_air = self.pieces_on_air
         left_pieces = [piece_id for piece_id in list(self.problem.in_graph.nodes.keys()) if piece_id not in pieces_on_air]
         return sum([self.problem.in_graph.nodes[piece_id].info['weight'] for piece_id in left_pieces])
 
@@ -116,17 +119,14 @@ class OurState:
             return NotImplemented
 
     def __eq__(self,other):
-        if len(self.pieces_on_air()) != len(other.pieces_on_air())
+        if self.launch_nr != other.launch_nr:
             return False
-        if self.pieces_on_air() == other.pieces_on_air()
+        if len(self.pieces_on_air) != len(other.pieces_on_air):
+            return False
+        intersect = set(self.pieces_on_air).intersection(set(other.pieces_on_air))
+        if len(intersect) == len(other.pieces_on_air):
             return True
-
-
-    def pieces_on_air(self):
-        pieces_on_air = []
-        for pieces in self.pieces_list:
-            pieces_on_air += pieces
-        return pieces_on_air
+        return False
 
     def total_left_capacity(self):
         return sum([l.max_payload for l in self.launches[self.launch_nr:]])
@@ -139,7 +139,7 @@ class OurState:
         if self.total_left_capacity() < self.left_weight():
             return []
 
-        ops = self.problem.get_valid_operations(self.pieces_on_air(), self.launches[self.launch_nr].max_payload)
+        ops = self.problem.get_valid_operations(self.pieces_on_air, self.launches[self.launch_nr].max_payload)
 
         succ = []
         if self.launch_nr + 1 < len(self.launches):
