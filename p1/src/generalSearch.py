@@ -7,10 +7,10 @@ class GeneralSearch:
         self.open_list.put(problem.get_initial_state())
 
     def init_search(self):
-        i=0
+
         while not self.open_list.empty():
             node = self.open_list.get()
-            i += 1
+
             if node.isa_goal_state():
                 return node
             else:

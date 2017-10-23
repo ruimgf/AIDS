@@ -2,22 +2,21 @@ import sys
 from ourgraph import StructureGraph
 from queue import *
 
-from assemblyProb import Problem
+from assemblyProb import Problem,heur_cost_per_kg, heur_left_weight
 from generalSearch import GeneralSearch
 
 
 def main(args):
-    G = StructureGraph.read_from_file(args[2])
-    p = Problem(G)
+    g = StructureGraph.read_from_file(args[2])
 
     if args[1] == '-u':
-        q = PriorityQueue()
-        f = GeneralSearch(Problem(G), q)
-        return f.init_search()
-
+        p = Problem(g)
     elif args[1] == '-i':
-        pass #informed search
+        p = Problem(g, heur_left_weight)
 
+    q = PriorityQueue()
+    f = GeneralSearch(p, q)
+    return f.init_search()
 if __name__ == '__main__':
 
 

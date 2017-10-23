@@ -2,6 +2,7 @@ from node import Node
 import itertools
 import sys
 
+
 class Operation:
     def __init__(self, pieces,pay_load):
         self.pieces = pieces
@@ -11,15 +12,15 @@ class Operation:
         return str(self.pieces)
 
 
-
 class Problem:
-    def __init__(self, g):
+    def __init__(self, g, heuristic=None):
 
         self.in_graph = g
         self.launches = g.info['launches']
         self.operations = []
         allIds = self.in_graph.nodes.keys()
         self.max_pay_load = max([launch.max_payload for launch in self.launches])
+        self.heuristic = heuristic
 
         for i in range(1, len(self.in_graph) + 1):
             combinations = itertools.combinations(allIds, i)
@@ -29,25 +30,37 @@ class Problem:
                     self.operations.append(Operation(list(combination), total_weight))
 
     def get_initial_state(self):
-        return OurState(self,[[] for x in range(len(self.launches))])
+        return OurState(self, [[] for x in range(len(self.launches))])
 
     def get_valid_operations(self, pieces_on_air, max_payload):
-        set_air = pieces_on_air
         left_pieces = [x for x in self.in_graph.nodes.keys() if x not in pieces_on_air]
         ops = []
         for i in range(1, len(left_pieces) + 1):
             combinations = itertools.combinations(left_pieces, i)
             for combination in combinations:
                 total_weight = sum([self.in_graph.nodes[x].info['weight'] for x in list(combination)])
-                if total_weight <= max_payload:
+                if total_weight <= max_payload and self.in_graph.connected_subset(list(combination) + pieces_on_air):
                     ops.append(Operation(list(combination), total_weight))
 
-        ops = [x for x in ops if self.in_graph.connected_subset(list(x.pieces) + pieces_on_air)]
         return ops
 
     def __repr__(self):
         return str(self.operations)
 
+
+def g(state):
+    return sum(state.cost_launch)
+
+
+def heur_cost_per_kg(state):
+    total_cost = sum(state.cost_launch)
+    total_weight = sum([state.problem.in_graph.nodes[key].info['weight'] for key in state.pieces_on_air()])
+    total_weight = total_weight + 0.0000000001
+
+    return total_cost/total_weight * state.left_weight()
+
+def heur_left_weight(state):
+    return state.left_weight()
 
 class OurState:
 
@@ -62,7 +75,10 @@ class OurState:
         else:
             self.cost_launch = cost_launch
 
-        self.cost = sum(self.cost_launch)
+        if self.problem.heuristic is None:
+            self.cost = g(self)
+        else:
+            self.cost = g(self) + self.problem.heuristic(self)
 
     def __repr__(self):
         s = ""
@@ -98,6 +114,13 @@ class OurState:
 
         except AttributeError:
             return NotImplemented
+
+    def __eq__(self,other):
+        if len(self.pieces_on_air()) != len(other.pieces_on_air())
+            return False
+        if self.pieces_on_air() == other.pieces_on_air()
+            return True
+
 
     def pieces_on_air(self):
         pieces_on_air = []
