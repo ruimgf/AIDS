@@ -18,6 +18,7 @@ class Problem:
         self.in_graph = g
         self.launches = g.info['launches']
         self.operations = []
+        
         allIds = self.in_graph.nodes.keys()
         self.max_pay_load = max([launch.max_payload for launch in self.launches])
         self.heuristic = heuristic
@@ -33,6 +34,7 @@ class Problem:
         return OurState(self, [[] for x in range(len(self.launches))])
 
     def get_valid_operations(self, pieces_on_air, max_payload):
+        '''
         left_pieces = [x for x in self.in_graph.nodes.keys() if x not in pieces_on_air]
         ops = []
         for i in range(1, len(left_pieces) + 1):
@@ -41,7 +43,9 @@ class Problem:
                 total_weight = sum([self.in_graph.nodes[x].info['weight'] for x in list(combination)])
                 if total_weight <= max_payload and self.in_graph.connected_subset(list(combination) + pieces_on_air):
                     ops.append(Operation(list(combination), total_weight))
-
+        '''
+        set_air = set(pieces_on_air)
+        ops = [x for x in self.operations if x.pay_load <= max_payload and len(set_air.intersection(set(x.pieces))) == 0 and self.in_graph.connected_subset(list(x.pieces) + pieces_on_air)]
         return ops
 
     def __repr__(self):
@@ -132,7 +136,7 @@ class OurState:
         except AttributeError:
             return NotImplemented
 
-    def __eq__(self,other):
+    def __eq__(self, other):
         if self.launch_nr != other.launch_nr:
             return False
         if len(self.pieces_on_air) != len(other.pieces_on_air):
