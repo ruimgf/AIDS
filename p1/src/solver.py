@@ -2,7 +2,7 @@ import sys
 from ourgraph import StructureGraph
 from queue import *
 
-from assemblyProb import Problem,heur_cost_per_kg, heur_left_weight,heur_cena
+from assemblyProb import *
 from generalSearch import GeneralSearch
 
 
@@ -24,4 +24,3 @@ if __name__ == '__main__':
         print("Usage solver.py [-u,-i] filename")
         exit(-1)
     print(main(sys.argv))
-

@@ -51,7 +51,7 @@ class Problem:
 def g(state):
     return sum(state.cost_launch)
 
-
+#not admissible
 def heur_cost_per_kg(state):
     total_cost = sum(state.cost_launch)
     total_weight = sum([state.problem.in_graph.nodes[key].info['weight'] for key in state.pieces_on_air()])
@@ -59,11 +59,22 @@ def heur_cost_per_kg(state):
 
     return total_cost/total_weight * state.left_weight()
 
+# maybe is admissible
 def heur_left_weight(state):
     return state.left_weight()
 
+#not admissible, dont know if it is good
+def heur_cost_at_this_fly(state):
+    try:
+        return state.left_weight() * state.launches[state.launch_nr].variable_cost
+    except:
+        return 0;
+
+#maybe is admissible
 def heur_cena(state):
-    return min([launch.compute_cost(state.left_weight()) for launch in state.launches[state.launch_nr:]])
+    return min([launch.compute_cost(state.left_weight()) for launch in state.launches])
+
+
 
 class OurState:
 
