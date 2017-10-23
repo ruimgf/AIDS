@@ -159,7 +159,7 @@ class OurState:
         if self.launch_nr + 1 < len(self.launches):
             costs = self.cost_launch.copy()
             costs[self.launch_nr] = 0
-            s = OurState(self.problem, self.pieces_list, self.launch_nr + 1,costs)
+            s = OurState(self.problem, self.pieces_list.copy(), self.launch_nr + 1,costs)
             succ.append(s)
 
         for op in ops:
