@@ -1,8 +1,33 @@
-from node import Node
+
 import itertools
-import sys
+from heapq import heappop, heappush,heapify
 
+class ourPriorityQueue():
 
+    def __init__(self):
+        self.pq = []  # list of entries arranged in a heap
+        self.entry_finder = {}  # mapping of tasks to entries
+        self.REMOVED = '<removed-task>'  # placeholder for a removed task
+        self.counter = itertools.count()  # unique sequence count
+    def put(self,task, priority=0):
+        'Add a new task or update the priority of an existing task'
+        entry = task
+        heappush(self.pq, entry)
+
+    def remove(self,task):
+        'Mark an existing task as REMOVED.  Raise KeyError if not found.'
+        self.pq.remove(task)
+        heapify(self.pq)
+
+    def get(self):
+        'Remove and return the lowest priority task. Raise KeyError if empty.'
+        while self.pq:
+            task = heappop(self.pq)
+            return task
+        raise KeyError('pop from an empty priority queue')
+
+    def empty(self):
+        return len(self.pq) == 0
 class Operation:
     def __init__(self, pieces,pay_load):
         self.pieces = pieces
@@ -18,8 +43,9 @@ class Problem:
         self.in_graph = g
         self.launches = g.info['launches']
         self.operations = []
+
         allIds = self.in_graph.nodes.keys()
-        self.max_pay_load = max([launch.max_payload for launch in self.launches])
+        self.max_pay_load = max(self.launches,key = lambda x: x.max_payload).max_payload
         self.heuristic = heuristic
 
         for i in range(1, len(self.in_graph) + 1):
@@ -33,6 +59,7 @@ class Problem:
         return OurState(self, [[] for x in range(len(self.launches))])
 
     def get_valid_operations(self, pieces_on_air, max_payload):
+        '''
         left_pieces = [x for x in self.in_graph.nodes.keys() if x not in pieces_on_air]
         ops = []
         for i in range(1, len(left_pieces) + 1):
@@ -41,7 +68,9 @@ class Problem:
                 total_weight = sum([self.in_graph.nodes[x].info['weight'] for x in list(combination)])
                 if total_weight <= max_payload and self.in_graph.connected_subset(list(combination) + pieces_on_air):
                     ops.append(Operation(list(combination), total_weight))
-
+        '''
+        set_air = set(pieces_on_air)
+        ops = [x for x in self.operations if x.pay_load <= max_payload and len(set_air.intersection(set(x.pieces))) == 0 and self.in_graph.connected_subset(list(x.pieces) + pieces_on_air)]
         return ops
 
     def __repr__(self):
@@ -132,7 +161,7 @@ class OurState:
         except AttributeError:
             return NotImplemented
 
-    def __eq__(self,other):
+    def __eq__(self, other):
         if self.launch_nr != other.launch_nr:
             return False
         if len(self.pieces_on_air) != len(other.pieces_on_air):
