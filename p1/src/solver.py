@@ -12,7 +12,7 @@ def main(args):
     if args[1] == '-u':
         p = Problem(g)
     elif args[1] == '-i':
-        p = Problem(g, heur_cost_per_kg)
+        p = Problem(g, heur_force_occpancy)
 
     q = ourPriorityQueue()
     f = GeneralSearch(p, q)

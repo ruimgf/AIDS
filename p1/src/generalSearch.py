@@ -7,11 +7,13 @@ class GeneralSearch:
         self.open_list.put(problem.get_initial_state())
 
     def init_search(self):
-
+        i = 0
         while not self.open_list.empty():
+            i = i + 1
             node = self.open_list.get()
 
             if node.isa_goal_state():
+                print("we have " + str(i) +  " iterations")
                 return node
             else:
                 l = node.get_sucessors()

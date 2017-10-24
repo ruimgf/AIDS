@@ -2,6 +2,7 @@
 import itertools
 from heapq import heappop, heappush,heapify
 
+###############################################################################
 class ourPriorityQueue():
 
     def __init__(self):
@@ -28,6 +29,8 @@ class ourPriorityQueue():
 
     def empty(self):
         return len(self.pq) == 0
+
+################################################################################
 class Operation:
     def __init__(self, pieces,pay_load):
         self.pieces = pieces
@@ -36,7 +39,7 @@ class Operation:
     def __repr__(self):
         return str(self.pieces)
 
-
+################################################################################
 class Problem:
     def __init__(self, g, heuristic=None):
 
@@ -76,9 +79,13 @@ class Problem:
     def __repr__(self):
         return str(self.operations)
 
-
+################################################################################
+#maybe we wave to move this TODO
 def g(state):
     return sum(state.cost_launch)
+
+################################################################################
+#heuristic funtions
 
 #not admissible
 def heur_cost_per_kg(state):
@@ -99,12 +106,26 @@ def heur_cost_at_this_fly(state):
     except:
         return 0;
 
-#maybe is admissible
+def heur_force_occpancy(state):
+    i = 0
+    occupancy = [0 for i in range(len(state.launches))]
+    number_of_valid_elements = 0;
+    for element in state.pieces_list:
+            occupancy[i] = sum([state.problem.in_graph.nodes[id].info['weight'] for id in element])
+            if not (not element):#if list have elements
+                number_of_valid_elements = number_of_valid_elements + 1
+            occupancy[i] = occupancy[i] / state.launches[i].max_payload
+            i = i + 1
+    if number_of_valid_elements != 0:
+        return g(state) * (sum(occupancy) / number_of_valid_elements)
+    else:
+        return 0;
+#maybe is admissible but its too slow
 def heur_cena(state):
-    return min([launch.compute_cost(state.left_weight()) for launch in state.launches])
+    return min([launch.compute_variable_cost(state.left_weight()) for launch in state.launches])
 
 
-
+################################################################################
 class OurState:
 
     def __init__(self, problem,pieces_list,launch_nr=0,cost_launch=None):
@@ -207,7 +228,7 @@ class OurState:
             succ.append(s)
 
         return succ
-
+################################################################################
 
 class Launch:
     def __init__(self, date, max_payload, fixed_cost, variable_cost):
@@ -221,10 +242,16 @@ class Launch:
 
     def get_str(self, pieces, cost):
         s = ""
-        s += self.date.strftime('%d%M%Y') + "  "
+        s += self.date.strftime('%d%m%Y') + "  "
         for piece in pieces:
             s = s + " " + piece
         return s + "  " + "%.6f" % cost
+
+    def compute_variable_cost(self,total_weight):
+        if total_weight != 0:
+            return self.variable_cost * total_weight
+        else:
+            return 0
 
     def compute_cost(self,total_weight):
         if total_weight != 0:

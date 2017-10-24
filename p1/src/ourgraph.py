@@ -3,7 +3,7 @@ from edge import Edge
 #import networkx as nx  # só usado para desenhar o grafo
 #import matplotlib.pyplot as plt
 from assemblyProb import Launch
-from datetime import date
+from datetime import datetime
 
 
 class OurGraph:
@@ -23,7 +23,7 @@ class OurGraph:
                 self.DFS(discovered, element, node_set)
 
     """
-    function that given a graph and a list of valid nodes 
+    function that given a graph and a list of valid nodes
     to visti returns true if the subgraph is connected and false otherwise
     """
 
@@ -94,11 +94,7 @@ class StructureGraph(OurGraph):
                     edge= (data[1],data[2])
                     edges.append(edge)
                 elif(line[0]=='L'): #launch
-                    data_date = list(data[1])
-                    dia = int(''.join(data_date[0:2]))
-                    mes = int(''.join(data_date[2:4]))
-                    ano = int(''.join(data_date[4:]))
-                    data_date = date(ano, mes, dia)
+                    data_date = datetime.strptime(data[1],'%d%m%Y')
                     l = Launch(data_date, data[2], data[3], data[4])
                     launches.append(l)
                 else:
