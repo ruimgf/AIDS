@@ -3,11 +3,12 @@ import itertools
 from heapq import heappop, heappush,heapify
 
 class ourPriorityQueue():
-    pq = []  # list of entries arranged in a heap
-    entry_finder = {}  # mapping of tasks to entries
-    REMOVED = '<removed-task>'  # placeholder for a removed task
-    counter = itertools.count()  # unique sequence count
 
+    def __init__(self):
+        self.pq = []  # list of entries arranged in a heap
+        self.entry_finder = {}  # mapping of tasks to entries
+        self.REMOVED = '<removed-task>'  # placeholder for a removed task
+        self.counter = itertools.count()  # unique sequence count
     def put(self,task, priority=0):
         'Add a new task or update the priority of an existing task'
         entry = task
@@ -22,9 +23,9 @@ class ourPriorityQueue():
         'Remove and return the lowest priority task. Raise KeyError if empty.'
         while self.pq:
             task = heappop(self.pq)
-            if task is not self.REMOVED:
-                return task
+            return task
         raise KeyError('pop from an empty priority queue')
+
     def empty(self):
         return len(self.pq) == 0
 class Operation:
