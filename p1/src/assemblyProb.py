@@ -45,7 +45,7 @@ class Problem:
         self.operations = []
 
         allIds = self.in_graph.nodes.keys()
-        self.max_pay_load = max([launch.max_payload for launch in self.launches])
+        self.max_pay_load = max(self.launches,key = lambda x: x.max_payload).max_payload
         self.heuristic = heuristic
 
         for i in range(1, len(self.in_graph) + 1):
