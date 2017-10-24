@@ -16,14 +16,14 @@ class GeneralSearch:
             else:
                 l = node.get_sucessors()
                 for element in l:
-                    if element not in self.open_list.queue:
-                        self.open_list.put(element)
+                    if element not in self.open_list.pq:
+                        self.open_list.put(element,element.cost)
                     else:
-                        for state in self.open_list.queue:
+                        for state in self.open_list.pq:
                             if state == element:
                                 if state.cost > element.cost:
-                                    self.open_list.queue.remove(state)
-                                    self.open_list.put(element)
+                                    self.open_list.remove(state)
+                                    self.open_list.put(element,element.cost)
                                     break
 
         return "0"

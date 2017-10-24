@@ -14,7 +14,7 @@ def main(args):
     elif args[1] == '-i':
         p = Problem(g, heur_cena)
 
-    q = PriorityQueue()
+    q = ourPriorityQueue()
     f = GeneralSearch(p, q)
     return f.init_search()
 if __name__ == '__main__':
