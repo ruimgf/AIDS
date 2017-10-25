@@ -106,6 +106,7 @@ def heur_cost_at_this_fly(state):
     except:
         return 0;
 
+#not admissible because it 
 def heur_force_occpancy(state):
     i = 0
     occupancy = [0 for i in range(len(state.launches))]
