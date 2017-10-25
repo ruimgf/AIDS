@@ -7,25 +7,27 @@ class GeneralSearch:
         self.open_list.put(problem.get_initial_state())
 
     def init_search(self):
-        i = 0
+        self.i = 0
         while not self.open_list.empty():
-            i = i + 1
+            self.i += 1
             node = self.open_list.get()
-
+            
             if node.isa_goal_state():
-                print("we have " + str(i) +  " iterations")
+                print("we have " + str(self.i) +  " iterations")
                 return node
             else:
                 l = node.get_sucessors()
                 for element in l:
-                    if element not in self.open_list.pq:
-                        self.open_list.put(element,element.cost)
-                    else:
-                        for state in self.open_list.pq:
-                            if state == element:
-                                if state.cost > element.cost:
-                                    self.open_list.remove(state)
-                                    self.open_list.put(element,element.cost)
-                                    break
+                    try:
+                        i = self.open_list.pq.index(element)
+                        state = self.open_list.pq[i]
+                        if state.cost > element.cost:
+                            self.open_list.remove(state)
+                            self.open_list.put(element)
+                    except ValueError:
+                        self.open_list.put(element)
+
+
+
 
         return "0"

@@ -62,7 +62,7 @@ class Problem:
         return OurState(self, [[] for x in range(len(self.launches))])
 
     def get_valid_operations(self, pieces_on_air, max_payload):
-        '''
+
         left_pieces = [x for x in self.in_graph.nodes.keys() if x not in pieces_on_air]
         ops = []
         for i in range(1, len(left_pieces) + 1):
@@ -71,9 +71,9 @@ class Problem:
                 total_weight = sum([self.in_graph.nodes[x].info['weight'] for x in list(combination)])
                 if total_weight <= max_payload and self.in_graph.connected_subset(list(combination) + pieces_on_air):
                     ops.append(Operation(list(combination), total_weight))
-        '''
-        set_air = set(pieces_on_air)
-        ops = [x for x in self.operations if x.pay_load <= max_payload and len(set_air.intersection(set(x.pieces))) == 0 and self.in_graph.connected_subset(list(x.pieces) + pieces_on_air)]
+
+        #set_air = set(pieces_on_air)
+        #ops = [x for x in self.operations if x.pay_load <= max_payload and len(set_air.intersection(set(x.pieces))) == 0 and self.in_graph.connected_subset(list(x.pieces) + pieces_on_air)]
         return ops
 
     def __repr__(self):
@@ -110,7 +110,7 @@ def heur_cost_at_this_fly(state):
 def heur_force_occpancy(state):
     i = 0
     occupancy = [0 for i in range(len(state.launches))]
-    number_of_valid_elements = 0;
+    number_of_valid_elements = 0
     for element in state.pieces_list:
             occupancy[i] = sum([state.problem.in_graph.nodes[id].info['weight'] for id in element])
             if not (not element):#if list have elements
@@ -123,8 +123,10 @@ def heur_force_occpancy(state):
         return 0;
 #maybe is admissible but its too slow
 def heur_cena(state):
-    return min([launch.compute_variable_cost(state.left_weight()) for launch in state.launches])
-
+    try:
+        return min([launch.compute_variable_cost(state.left_weight()) for launch in state.launches[state.launch_nr:]])
+    except ValueError:
+        return 0
 
 ################################################################################
 class OurState:
