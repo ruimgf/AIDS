@@ -109,7 +109,7 @@ def heur_cost_at_this_fly(state):
 def heur_force_occpancy(state):
     i = 0
     occupancy = [0 for i in range(len(state.launches))]
-    number_of_valid_elements = 0;
+    number_of_valid_elements = 0
     for element in state.pieces_list:
             occupancy[i] = sum([state.problem.in_graph.nodes[id].info['weight'] for id in element])
             if not (not element):#if list have elements
@@ -122,8 +122,10 @@ def heur_force_occpancy(state):
         return 0;
 #maybe is admissible but its too slow
 def heur_cena(state):
-    return min([launch.compute_variable_cost(state.left_weight()) for launch in state.launches])
-
+    try:
+        return min([launch.compute_variable_cost(state.left_weight()) for launch in state.launches[state.launch_nr:]])
+    except ValueError:
+        return 0
 
 ################################################################################
 class OurState:
