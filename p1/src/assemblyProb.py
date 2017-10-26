@@ -59,7 +59,7 @@ class Problem:
                     self.operations.append(Operation(list(combination), total_weight))
 
     def get_initial_state(self):
-        return OurState(self, [[] for x in range(len(self.launches))])
+        return OurState(self, [ () for x in range(len(self.launches))])
 
     def get_valid_operations(self, pieces_on_air, max_payload):
 
@@ -104,7 +104,7 @@ def heur_cost_at_this_fly(state):
     try:
         return state.left_weight() * state.launches[state.launch_nr].variable_cost
     except:
-        return 0;
+        return 0
 
 def heur_force_occpancy(state):
     i = 0
@@ -119,7 +119,7 @@ def heur_force_occpancy(state):
     if number_of_valid_elements != 0:
         return g(state) * (sum(occupancy) / number_of_valid_elements)
     else:
-        return 0;
+        return 0
 #maybe is admissible but its too slow
 def heur_cena(state):
     try:
@@ -173,7 +173,7 @@ class OurState:
 
     def left_weight(self):
         pieces_on_air = self.pieces_on_air
-        left_pieces = [piece_id for piece_id in list(self.problem.in_graph.nodes.keys()) if piece_id not in pieces_on_air]
+        left_pieces = [piece_id for piece_id in self.problem.in_graph.nodes.keys() if piece_id not in pieces_on_air]
         return sum([self.problem.in_graph.nodes[piece_id].info['weight'] for piece_id in left_pieces])
 
     def __lt__(self, other):
@@ -189,8 +189,8 @@ class OurState:
             return False
         if len(self.pieces_on_air) != len(other.pieces_on_air):
             return False
-        intersect = set(self.pieces_on_air).intersection(set(other.pieces_on_air))
-        if len(intersect) == len(other.pieces_on_air) and len(intersect) == len(self.pieces_on_air):
+
+        if set(self.pieces_on_air) == set(other.pieces_on_air):
             return True
         return False
 
@@ -211,19 +211,13 @@ class OurState:
         if self.launch_nr + 1 < len(self.launches):
             costs = self.cost_launch.copy()
             costs[self.launch_nr] = 0
-            lcopy = [[] for x in range(len(self.pieces_list))]
-            for i in range(len(lcopy)):
-                lcopy[i] += self.pieces_list[i].copy()
+            lcopy = self.pieces_list.copy()
             s = OurState(self.problem, lcopy, self.launch_nr + 1,costs)
             succ.append(s)
 
         for op in ops:
-            lcopy = [[] for x in range(len(self.pieces_list))]
-
-            for i in range(len(lcopy)):
-                lcopy[i] += self.pieces_list[i].copy()
-
-            lcopy[self.launch_nr] += op.pieces
+            lcopy= self.pieces_list.copy()
+            lcopy[self.launch_nr] = op.pieces
             costs = self.cost_launch.copy()
             costs[self.launch_nr] = self.launches[self.launch_nr].compute_cost(op.pay_load)
             s = OurState(self.problem,lcopy, self.launch_nr + 1,costs)
@@ -260,6 +254,3 @@ class Launch:
             return self.fixed_cost + self.variable_cost * total_weight
         else:
             return 0
-
-    def total_weight(self,pieces):
-        return sum([piece.weight for piece in pieces])
