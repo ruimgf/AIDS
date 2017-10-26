@@ -7,9 +7,6 @@ class ourPriorityQueue():
 
     def __init__(self):
         self.pq = []  # list of entries arranged in a heap
-        self.entry_finder = {}  # mapping of tasks to entries
-        self.REMOVED = '<removed-task>'  # placeholder for a removed task
-        self.counter = itertools.count()  # unique sequence count
     def put(self,task, priority=0):
         'Add a new task or update the priority of an existing task'
         entry = task
@@ -54,35 +51,34 @@ class Problem:
         for i in range(1, len(self.in_graph) + 1):
             combinations = itertools.combinations(allIds, i)
             for combination in combinations:
-                total_weight = sum([g.nodes[x].info['weight'] for x in list(combination)])
+                total_weight = sum([g.nodes[x].info['weight'] for x in combination])
                 if total_weight <= self.max_pay_load:
-                    self.operations.append(Operation(list(combination), total_weight))
+                    self.operations.append(Operation(combination, total_weight))
 
     def get_initial_state(self):
         return OurState(self, [ () for x in range(len(self.launches))])
 
     def get_valid_operations(self, pieces_on_air, max_payload):
 
-        left_pieces = [x for x in self.in_graph.nodes.keys() if x not in pieces_on_air]
+        left_pieces = set(self.in_graph.nodes.keys()) - pieces_on_air
         ops = []
         for i in range(1, len(left_pieces) + 1):
             combinations = itertools.combinations(left_pieces, i)
             for combination in combinations:
-                total_weight = sum([self.in_graph.nodes[x].info['weight'] for x in list(combination)])
-                if total_weight <= max_payload and self.in_graph.connected_subset(list(combination) + pieces_on_air):
-                    ops.append(Operation(list(combination), total_weight))
-
-        #set_air = set(pieces_on_air)
-        #ops = [x for x in self.operations if x.pay_load <= max_payload and len(set_air.intersection(set(x.pieces))) == 0 and self.in_graph.connected_subset(list(x.pieces) + pieces_on_air)]
+                total_weight = sum([self.in_graph.nodes[x].info['weight'] for x in combination])
+                if total_weight <= max_payload and self.in_graph.connected_subset(list(combination) + list(pieces_on_air)):
+                    ops.append(Operation(combination, total_weight))
         return ops
+
+    def g(self,state):
+        return sum(state.cost_launch)
 
     def __repr__(self):
         return str(self.operations)
 
 ################################################################################
 #maybe we wave to move this TODO
-def g(state):
-    return sum(state.cost_launch)
+
 
 ################################################################################
 #heuristic funtions
@@ -112,7 +108,7 @@ def heur_force_occpancy(state):
     number_of_valid_elements = 0
     for element in state.pieces_list:
             occupancy[i] = sum([state.problem.in_graph.nodes[id].info['weight'] for id in element])
-            if not (not element):#if list have elements
+            if element:#if list have elements
                 number_of_valid_elements = number_of_valid_elements + 1
             occupancy[i] = occupancy[i] / state.launches[i].max_payload
             i = i + 1
@@ -120,6 +116,7 @@ def heur_force_occpancy(state):
         return g(state) * (sum(occupancy) / number_of_valid_elements)
     else:
         return 0
+
 #maybe is admissible but its too slow
 def heur_cena(state):
     try:
@@ -135,9 +132,12 @@ class OurState:
         self.launches = list(self.problem.in_graph.info['launches'])
         self.launch_nr = launch_nr
         self.pieces_list = pieces_list
+
         self.pieces_on_air = []
         for pieces in self.pieces_list:
             self.pieces_on_air += pieces
+
+        self.pieces_on_air = set(self.pieces_on_air)
 
         if cost_launch is None:
             self.cost_launch = [0 for x in range(len(self.launches))]
@@ -145,9 +145,9 @@ class OurState:
             self.cost_launch = cost_launch
 
         if self.problem.heuristic is None:
-            self.cost = g(self)
+            self.cost = self.problem.g(self)
         else:
-            self.cost = g(self) + self.problem.heuristic(self)
+            self.cost = self.problem.g(self) + self.problem.heuristic(self)
 
     def __repr__(self):
         s = ""
@@ -172,8 +172,7 @@ class OurState:
             return False
 
     def left_weight(self):
-        pieces_on_air = self.pieces_on_air
-        left_pieces = [piece_id for piece_id in self.problem.in_graph.nodes.keys() if piece_id not in pieces_on_air]
+        left_pieces = set(self.problem.in_graph.nodes.keys()) - set(self.pieces_on_air)
         return sum([self.problem.in_graph.nodes[piece_id].info['weight'] for piece_id in left_pieces])
 
     def __lt__(self, other):
@@ -190,7 +189,7 @@ class OurState:
         if len(self.pieces_on_air) != len(other.pieces_on_air):
             return False
 
-        if set(self.pieces_on_air) == set(other.pieces_on_air):
+        if self.pieces_on_air == other.pieces_on_air:
             return True
         return False
 
