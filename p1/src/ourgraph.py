@@ -19,7 +19,7 @@ class OurGraph:
         discovered[node_id] = True;
         valid_neigh = [x.id_ for x in self.nodes[node_id].neigh if x.id_ in node_set]
         for element in valid_neigh:
-            if discovered[element] == False:
+            if not discovered[element]:
                 self.DFS(discovered, element, node_set)
 
     """
