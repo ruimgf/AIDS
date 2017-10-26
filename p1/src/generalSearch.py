@@ -26,8 +26,5 @@ class GeneralSearch:
                             self.open_list.put(element)
                     except ValueError:
                         self.open_list.put(element)
-
-
-
-
+        print("we have " + str(self.i) + " iterations")
         return "0"
