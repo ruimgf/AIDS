@@ -32,9 +32,8 @@ class OurGraph:
         for element in node_set:
             discovered[element] = False
 
-        self.DFS(discovered,node_set[0],node_set)
+        self.DFS(discovered,node_set[-1],node_set)
 
-        # print(discovered)
         for element in discovered:
             if not discovered[element]:
                 return False
