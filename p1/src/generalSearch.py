@@ -16,6 +16,7 @@ class GeneralSearch:
             if node.isa_goal_state():
                 print("we have " + str(self.i) +  " iterations")
                 print("we have " + "a total of " + str(self.generatedNodes) + " generated nodes")
+                print("depth : " + str(node.launch_nr))
                 return node
             else:
                 l = node.get_sucessors()
