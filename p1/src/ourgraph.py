@@ -1,9 +1,10 @@
-from node import Node
-from edge import Edge
-#import networkx as nx  # só usado para desenhar o grafo
-#import matplotlib.pyplot as plt
-from assemblyProb import Launch
 from datetime import datetime
+
+# import networkx as nx  # só usado para desenhar o grafo
+# import matplotlib.pyplot as plt
+from assemblyProb import Launch
+from edge import Edge
+from node import Node
 
 
 class OurGraph:
@@ -16,10 +17,10 @@ class OurGraph:
     #node_set is a list of valid nodes in the graph
     def DFS(self,discovered,node_id,node_set):
 
-        discovered[node_id] = True;
+        discovered[node_id] = True
         valid_neigh = [x.id_ for x in self.nodes[node_id].neigh if x.id_ in node_set]
         for element in valid_neigh:
-            if discovered[element] == False:
+            if not discovered[element]:
                 self.DFS(discovered, element, node_set)
 
     """
@@ -32,9 +33,8 @@ class OurGraph:
         for element in node_set:
             discovered[element] = False
 
-        self.DFS(discovered,node_set[0],node_set)
+        self.DFS(discovered,node_set[-1],node_set)
 
-        # print(discovered)
         for element in discovered:
             if not discovered[element]:
                 return False
