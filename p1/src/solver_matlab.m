@@ -1,6 +1,6 @@
 %parameters
-N = 1794;
-d = 10;
+N = 14;
+d = 3;
 
 syms x;
 eq = 0;

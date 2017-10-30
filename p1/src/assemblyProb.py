@@ -91,9 +91,6 @@ def heur_cost_per_kg(state):
 
     return total_cost/total_weight * state.left_weight()
 
-# maybe is admissible
-def heur_left_weight(state):
-    return state.left_weight()
 
 #not admissible, dont know if it is good
 def heur_cost_at_this_fly(state):
@@ -102,7 +99,7 @@ def heur_cost_at_this_fly(state):
     except:
         return 0
 
-#not admissible because it 
+#not admissible because it overestimates the cost
 def heur_force_occpancy(state):
     i = 0
     occupancy = [0 for i in range(len(state.launches))]
@@ -118,12 +115,19 @@ def heur_force_occpancy(state):
     else:
         return 0
 
-#maybe is admissible but its too slow
-def heur_cena(state):
+#admissable
+def heur_best_from_now(state):
     try:
-        return min([launch.compute_variable_cost(state.left_weight()) for launch in state.launches[state.launch_nr:]])
+        return min([launch.compute_cost(state.left_weight()) for launch in state.launches[state.launch_nr:]])
     except ValueError:
         return 0
+
+#admissable
+def heur_best_from_start(state):
+        try:
+            return min([launch.compute_variable_cost(state.left_weight()) for launch in state.launches])
+        except ValueError:
+            return 0
 
 ################################################################################
 class OurState:
