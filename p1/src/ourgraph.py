@@ -12,6 +12,7 @@ class OurGraph:
         self.nodes = {}
         self.edges = []
         self.info = {}
+
     #discovered is a dictionary of discovered nodes
     #node_id is int of the current node
     #node_set is a list of valid nodes in the graph
@@ -25,9 +26,8 @@ class OurGraph:
 
     """
     function that given a graph and a list of valid nodes
-    to visti returns true if the subgraph is connected and false otherwise
+    to visit returns true if the subgraph is connected and false otherwise
     """
-
     def connected_subset(self, node_set):
         discovered = {}
         for element in node_set:
