@@ -22,12 +22,8 @@ class GeneralSearch:
                 l = node.get_sucessors()
                 self.generatedNodes += len(l)
                 for element in l:
-                    try:
-                        i = self.closed_list.index(element)
-                        if self.closed_list[i].cost <= element.cost: #an equal node with the same cost was yet expanded
-                            continue
-                    except ValueError:
-                        pass
+                    if element in self.closed_list:
+                        continue
                     try:
                         i = self.open_list.pq.index(element)
                         state = self.open_list.pq[i]
