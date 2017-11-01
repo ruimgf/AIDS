@@ -123,6 +123,7 @@ def heur_best_from_now(state):
         return 0
 
 #admissable
+
 def heur_best_from_start(state):
         try:
             return min([launch.compute_variable_cost(state.left_weight()) for launch in state.launches])
@@ -130,6 +131,7 @@ def heur_best_from_start(state):
             return 0
 
 ################################################################################
+
 class OurState:
 
     def __init__(self, problem,pieces_list,launch_nr=0,cost_launch=None):

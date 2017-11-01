@@ -1,10 +1,6 @@
 import numpy as np
 from scipy.optimize import minimize
 
-max = [22.8,22.8,140,70,22.8,250,22.8,22.8,23,115]
-cf = [62,62,90,85,62,132,49,49,32,86]
-cv = [0.4,0.4,1.8,1.2,1.2,1.6,0.4,0.4,1,1.2]
-P = 138.2
 
 def func(p):
     totalCost = 0
