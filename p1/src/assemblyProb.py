@@ -1,7 +1,7 @@
 
 import itertools
 from heapq import heappop, heappush,heapify
-
+import pulp
 ###############################################################################
 class ourPriorityQueue():
 
@@ -130,6 +130,57 @@ def heur_best_from_start(state):
         except ValueError:
             return 0
 
+def heur_optimal(state):
+    lauches = state.launches[state.launch_nr:]
+    P = state.left_weight()
+    max = [l.max_payload for l in lauches]
+    cf = [l.fixed_cost for l in lauches]
+    cv = [l.variable_cost for l in lauches]
+
+    p = []
+    y = []
+    prob = pulp.LpProblem("", pulp.LpMinimize)
+    for i in range(len(cf)):
+        k = pulp.LpVariable('p' + str(i), lowBound=0, cat='Continuous')
+        p.append(k)
+
+    for i in range(len(cf)):
+        k = pulp.LpVariable('y' + str(i), cat='Binary')
+        y.append(k)
+
+    l = 0
+    for i in range(len(cf)):
+        l += y[i] * cf[i] + cv[i] * p[i]
+
+    prob += l
+
+    f = 0
+
+    for i in range(len(cf)):
+        f += p[i]
+    prob += f == P
+
+    for i in range(len(cf)):
+        prob += p[i] <= max[i] * y[i]
+    '''
+    print(prob)
+    print(prob.solve())
+    print(LpStatus[prob.status])
+    
+    for variable in prob.variables():
+        print("{} = {}".format(variable.name, variable.varValue))
+    
+    print(value(prob.objective))
+    '''
+    prob.solve()
+    value = pulp.value(prob.objective)
+    prob = None
+    if value is not None:
+        return value
+    else:
+        return 0
+
+
 ################################################################################
 
 class OurState:
@@ -155,6 +206,7 @@ class OurState:
             self.cost = self.problem.g(self)
         else:
             self.cost = self.problem.g(self) + self.problem.heuristic(self)
+
 
     def __repr__(self):
         s = ""
