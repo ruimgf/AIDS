@@ -1,12 +1,14 @@
 import sys
 from ourgraph import StructureGraph
 from queue import *
+import warnings
 
 from assemblyProb import *
 from generalSearch import GeneralSearch
 
 
 def main(args):
+    warnings.filterwarnings("ignore")
     g = StructureGraph.read_from_file(args[2])
 
     if args[1] == '-u':
