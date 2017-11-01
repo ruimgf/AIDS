@@ -118,7 +118,7 @@ def heur_force_occpancy(state):
 #admissable
 def heur_best_from_now(state):
     try:
-        return min([launch.compute_cost(state.left_weight()) for launch in state.launches[state.launch_nr:]])
+        return min([launch.compute_variable_cost(state.left_weight()) for launch in state.launches[state.launch_nr:]])
     except ValueError:
         return 0
 
@@ -229,6 +229,7 @@ class OurState:
 
         return succ
 ################################################################################
+
 
 class Launch:
     def __init__(self, date, max_payload, fixed_cost, variable_cost):
