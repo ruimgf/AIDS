@@ -8,13 +8,17 @@ from generalSearch import GeneralSearch
 
 
 def main(args):
+    """
+    @param args: [programName,typeOfSearch,graphFile]
+    @return: string with problem solution
+    """
     warnings.filterwarnings("ignore")
     g = StructureGraph.read_from_file(args[2])
 
     if args[1] == '-u':
         p = Problem(g)
     elif args[1] == '-i':
-        p = Problem(g, heur_optimal)
+        p = Problem(g, heur_best_from_now)
 
     q = ourPriorityQueue()
     f = GeneralSearch(p, q)
