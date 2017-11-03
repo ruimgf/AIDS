@@ -19,6 +19,9 @@ def main(args):
         p = Problem(g)
     elif args[1] == '-i':
         p = Problem(g, heur_best_from_now)
+    else:
+        print("Usage solver.py [-u,-i] filename")
+        exit(-1)
 
     q = ourPriorityQueue()
     f = GeneralSearch(p, q)

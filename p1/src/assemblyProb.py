@@ -1,35 +1,39 @@
 
 import itertools
 from heapq import heappop, heappush,heapify
-import pulp
+#import pulp
 
 ###############################################################################
 class ourPriorityQueue():
     def __init__(self):
-        self.pq = []  # list of entries arranged in a heap
+        self.queue = []  # list of entries arranged in a heap
     def put(self,task, priority=0):
         'Add a new task or update the priority of an existing task'
         entry = task
-        heappush(self.pq, entry)
+        heappush(self.queue, entry)
 
     def remove(self,task):
         'Mark an existing task as REMOVED.  Raise KeyError if not found.'
-        self.pq.remove(task)
-        heapify(self.pq)
+        self.queue.remove(task)
+        heapify(self.queue)
 
     def get(self):
         'Remove and return the lowest priority task. Raise KeyError if empty.'
-        while self.pq:
-            task = heappop(self.pq)
+        while self.queue:
+            task = heappop(self.queue)
             return task
         raise KeyError('pop from an empty priority queue')
 
     def empty(self):
-        return len(self.pq) == 0
+        return len(self.queue) == 0
 
 ################################################################################
 class Operation:
     def __init__(self, pieces,pay_load):
+        """
+        @param pieces: pieces of operator
+        @param pay_load: weight of operator
+        """
         self.pieces = pieces
         self.pay_load = pay_load
 
@@ -40,6 +44,7 @@ class Operation:
 class Problem:
     def __init__(self, g, heuristic=None):
         """
+        This class represents the assembly problem
         @param g: graph of problem
         @param heuristic: heuristic to use
         """
@@ -76,7 +81,11 @@ class Problem:
                     ops.append(Operation(combination, total_weight))
         return ops
 
-    def g(self,state):
+    def g(self, state):
+        """
+        @param state: state
+        @return: path cost
+        """
         return sum(state.cost_launch)
 
     def __repr__(self):
@@ -92,13 +101,13 @@ def heur_best_from_now(state):
         return min([launch.compute_variable_cost(state.left_weight()) for launch in state.launches[state.launch_nr:]])
     except ValueError:
         return 0
-
+"""
 def heur_optimal(state):
-    """
-    This heuristic solves a linear problem to estimate the left cost.
-    @param state:
-    @return:
-    """
+    
+    #This heuristic solves a linear problem to estimate the left cost.
+    #@param state:
+    #@return:
+    
     lauches = state.launches[state.launch_nr:]
     P = state.left_weight()
     max = [l.max_payload for l in lauches]
@@ -138,12 +147,19 @@ def heur_optimal(state):
     else:
         return 0
 
+"""
 
-################################################################################
 
 class OurState:
 
     def __init__(self, problem,pieces_list,launch_nr=0,cost_launch=None):
+        """
+        This class represents one state of our problem
+        @param problem: Problem to solve
+        @param pieces_list: List of pieces on air
+        @param launch_nr: actual launch number
+        @param cost_launch: actual costs per launch
+        """
         self.problem = problem
         self.launches = list(self.problem.in_graph.info['launches'])
         self.launch_nr = launch_nr
@@ -164,7 +180,6 @@ class OurState:
             self.cost = self.problem.g(self)
         else:
             self.cost = self.problem.g(self) + self.problem.heuristic(self)
-
 
     def __repr__(self):
         s = ""
@@ -199,7 +214,6 @@ class OurState:
         return sum([self.problem.in_graph.nodes[piece_id].info['weight'] for piece_id in left_pieces])
 
     def __lt__(self, other):
-
         try:
             return self.cost < other.cost
 
@@ -235,6 +249,7 @@ class OurState:
         ops = self.problem.get_valid_operations(self.pieces_on_air, self.launches[self.launch_nr].max_payload)
 
         succ = []
+        # send any piece operation
         if self.launch_nr + 1 < len(self.launches):
             costs = self.cost_launch.copy()
             costs[self.launch_nr] = 0
@@ -242,6 +257,7 @@ class OurState:
             s = OurState(self.problem, lcopy, self.launch_nr + 1, costs)
             succ.append(s)
 
+        # get valid pieces combinations
         for op in ops:
             lcopy= self.pieces_list.copy()
             lcopy[self.launch_nr] = op.pieces
