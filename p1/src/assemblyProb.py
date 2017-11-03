@@ -251,11 +251,17 @@ class OurState:
             succ.append(s)
 
         return succ
-################################################################################
 
 
 class Launch:
     def __init__(self, date, max_payload, fixed_cost, variable_cost):
+        """
+        Class that represents a Launch
+        @param date: date of launch
+        @param max_payload: max_payload
+        @param fixed_cost: fixed_cost of launch
+        @param variable_cost: variable cost of launch
+        """
         self.date = date #date of the launch
         self.max_payload = float(max_payload)
         self.fixed_cost = float(fixed_cost)
