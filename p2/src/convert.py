@@ -1,7 +1,6 @@
 import sys
+from iofiles import *
 def main(args):
-    a = input()
-    b = eval(a)
-    print(b)
+    print(SentencesReader.readstdin())
 if __name__ == '__main__':
-    print(main(sys.argv))
+    main(sys.argv)
