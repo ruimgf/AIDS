@@ -1,0 +1,72 @@
+from queue import *
+from copy import *
+
+class TreeNode():
+    def __init__(self,value,left=None,right=None):
+        self.value = value
+        self.left = left
+        self.right = right
+    def __repr__(self):
+        pass
+
+class Tree():
+    def __init__(self,root=None):
+        self.root = root
+        self.spaces = [60,40,40,30,20,20,20,25,10,10,10,10,10,10,10,10]
+    def represent(self):
+        l = Queue()
+        l.put(self.root)
+        i = 1
+        n = 0
+        p = 0
+        while not l.empty():
+            e = l.get()
+            #print("i=" + str(i))
+            #print("2^n = " + str(2**n))
+            if(i == 2**(n+1)):
+               #print(n*" " + "╚╗")
+               n += 1
+               p = 5
+               print(1 * "\n")
+               if n == 4:
+                   break
+
+            if e is not None:
+                print(self.spaces[i-1]*" ",end='')
+                print(str(e.value),end='')
+                l.put(e.left)
+                l.put(e.right)
+            else:
+                print(self.spaces[i-1]*" ",end='')
+                print("-1",end='')
+            i += 1
+
+        print("")
+
+    def applyDist(self,ndOr,ndAnd):
+
+        ndOr.value = "and" # or passa a and
+
+        ndOrLeft = ndOr.left
+        ndOrRight = ndOr.right
+
+        if ndAnd is ndOr.left:
+            ndOr.left = TreeNode("or",ndAnd.left,deepcopy(ndOrRight))
+            ndOr.right = TreeNode("or",ndAnd.right,ndOrRight)
+        else:
+            ndOr.left = TreeNode("or",ndAnd.left,ndOrLeft)
+            ndOr.right = TreeNode("or",ndAnd.right,ndOrLeft)
+
+
+t = Tree(TreeNode("or",TreeNode("and",TreeNode("A"),TreeNode("B")),TreeNode("and",TreeNode("C"),TreeNode("D"))))
+
+t.represent()
+t.applyDist(t.root,t.root.left)
+print("after dist =================================================================\n\n\n\n")
+t.represent()
+t.applyDist(t.root.left,t.root.left.right)
+print("after dist =================================================================\n\n\n\n")
+t.represent()
+t.applyDist(t.root.right,t.root.right.right)
+print("after dist =================================================================\n\n\n\n")
+t.represent()
