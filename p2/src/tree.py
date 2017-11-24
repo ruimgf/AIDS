@@ -42,6 +42,23 @@ class Tree():
             i += 1
 
         print("")
+    def convertCNF(self):
+        """
+            convertCNF Runs a BFS that ensures that the result tree is a representation of a CNF
+        """
+        l = Queue()
+        l.put(self.root)
+        while not l.empty():
+            e = l.get()
+            if e.value == "or": # if we find an and before a or it isn't a CNF
+                if e.left is not None and e.left.value == "and":
+                    self.applyDist(e,e.left)
+                elif e.right is not None and e.right.value == "and":
+                    self.applyDist(e,e.right)
+            if e.left is not None:
+                l.put(e.left)
+            if e.right is not None:
+                l.put(e.right)
 
     def applyDist(self,ndOr,ndAnd):
 
@@ -61,12 +78,6 @@ class Tree():
 t = Tree(TreeNode("or",TreeNode("and",TreeNode("A"),TreeNode("B")),TreeNode("and",TreeNode("C"),TreeNode("D"))))
 
 t.represent()
-t.applyDist(t.root,t.root.left)
-print("after dist =================================================================\n\n\n\n")
-t.represent()
-t.applyDist(t.root.left,t.root.left.right)
-print("after dist =================================================================\n\n\n\n")
-t.represent()
-t.applyDist(t.root.right,t.root.right.right)
-print("after dist =================================================================\n\n\n\n")
+
+t.convertCNF()
 t.represent()
