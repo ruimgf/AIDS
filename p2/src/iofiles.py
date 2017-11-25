@@ -21,12 +21,14 @@ class SentencesReader():
             t = Tree(SentencesReader.process_sentence(s))
             t.convertCNF()
             t.convertCNF()
-            t.represent()
-            land = []
-            lor = []
-            r = SentencesReader.get_disjunctions(t.root,land,lor,0)
-            for e in land:
-                print(e)
+            #t.represent()
+            r = SentencesReader.get_disjunctions(t.root)
+            for e in r:
+                if e is not None:
+                    if type(e) is list and len(e)==1:
+                        print(e[0])
+                    else:
+                        print(e)
 
     @staticmethod
     def process_sentence(s):
@@ -53,7 +55,7 @@ class SentencesReader():
                         # not(A => B)
                         # A ^ not(B)
                         C = SentencesReader.process_sentence(s[1][1])
-                        D = SentencesReader.process_sentence(('not',s[1][2])))
+                        D = SentencesReader.process_sentence(('not',s[1][2]))
                         return TreeNode('and',C,D)
                     elif s[1][0] == '<=>':
                         # not(A <=> B)
@@ -63,7 +65,7 @@ class SentencesReader():
                         C = SentencesReader.process_sentence(s[1][1])
                         D = SentencesReader.process_sentence(s[1][2])
                         E = SentencesReader.process_sentence(('not',s[1][1]))
-                        F = SentencesReader.process_sentence(('not',s[1][2])
+                        F = SentencesReader.process_sentence(('not',s[1][2]))
 
                         G = TreeNode('or',C,D)
                         H = TreeNode('or',E,F)
@@ -100,23 +102,21 @@ class SentencesReader():
                 raise IOError
         else:
             raise IOError
-
+    def get_disjunctions(node):
+        land = []
+        land.append(SentencesReader._get_disjunctions_rec(node,land))
+        return land
     @staticmethod
-    def get_disjunctions(node,land,lor,findor):
+    def _get_disjunctions_rec(node,land):
 
         if node.value == 'and':
-            lor = []
-            SentencesReader.get_disjunctions(node.left,land,lor,findor)
-            if lor:
-                land.append(lor)
-            lor = []
-            SentencesReader.get_disjunctions(node.right,land,lor,findor)
-            if lor:
-                land.append(lor)
-
+            r = SentencesReader._get_disjunctions_rec(node.left,land)
+            if r not in land:
+                land.append(r)
+            r = SentencesReader._get_disjunctions_rec(node.right,land)
+            if r not in land:
+                land.append(r)
         elif node.value == 'or':
-            SentencesReader.get_disjunctions(node.left,land,lor,1)
-            SentencesReader.get_disjunctions(node.right,land,lor,1)
-            return
+            return SentencesReader._get_disjunctions_rec(node.left,land) + SentencesReader._get_disjunctions_rec(node.right,land)
         else:
-            lor.append(node.value)
+            return [node.value]
