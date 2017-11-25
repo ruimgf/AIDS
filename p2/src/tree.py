@@ -75,9 +75,9 @@ class Tree():
             ndOr.right = TreeNode("or",ndAnd.right,ndOrLeft)
 
 
-t = Tree(TreeNode("or",TreeNode("and",TreeNode("A"),TreeNode("B")),TreeNode("and",TreeNode("C"),TreeNode("D"))))
+#t = Tree(TreeNode("or",TreeNode("and",TreeNode("A"),TreeNode("B")),TreeNode("and",TreeNode("C"),TreeNode("D"))))
 
-t.represent()
+#t.represent()
 
-t.convertCNF()
-t.represent()
+#t.convertCNF()
+#t.represent()

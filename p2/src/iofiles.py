@@ -1,4 +1,5 @@
 import sys
+from tree import *
 
 class SentencesReader():
     """
@@ -17,20 +18,54 @@ class SentencesReader():
     @staticmethod
     def process_sentences(sentences):
         for s in sentences:
-            if type(s) is str:
-                pass
-            elif type(s) is tuple:
-                if s[0] == 'not':
-                    pass
-                elif s[0] == 'and':
-                    pass
-                elif s[0] == 'or':
-                    pass
-                elif s[0] == '=>':
-                    pass
-                elif s[0] == '<=>':
-                    pass
-                else:
-                    raise IOError
+            t = Tree(SentencesReader.process_sentence(s))
+            t.convertCNF()
+            t.convertCNF()
+            t.represent()
+            land = []
+            lor = []
+            r = SentencesReader.get_disjunctions(t.root,land,lor,0)
+            for e in land:
+                print(e)
+
+    @staticmethod
+    def process_sentence(s):
+        if type(s) is str:
+            return TreeNode(s)
+        elif type(s) is tuple:
+            if s[0] == 'not':
+                if type(s[1]) is str:
+                    return TreeNode(s)
+                #elif type(s[1]) is tuple:
+            elif s[0] == 'and':
+                return TreeNode(s[0],SentencesReader.process_sentence(s[1]),SentencesReader.process_sentence(s[2]))
+            elif s[0] == 'or':
+                return TreeNode(s[0],SentencesReader.process_sentence(s[1]),SentencesReader.process_sentence(s[2]))
+            elif s[0] == '=>':
+                return TreeNode('or',SentencesReader.process_sentence(('not',s[1])),SentencesReader.process_sentence(s[2]))
+            elif s[0] == '<=>':
+                return TreeNode('and',TreeNode('or',SentencesReader.process_sentence(('not',s[1])),SentencesReader.process_sentence(s[2])),TreeNode('or',SentencesReader.process_sentence(('not',s[2])),SentencesReader.process_sentence(s[1])))
             else:
                 raise IOError
+        else:
+            raise IOError
+
+    @staticmethod
+    def get_disjunctions(node,land,lor,findor):
+
+        if node.value == 'and':
+            lor = []
+            SentencesReader.get_disjunctions(node.left,land,lor,findor)
+            if lor:
+                land.append(lor)
+            lor = []
+            SentencesReader.get_disjunctions(node.right,land,lor,findor)
+            if lor:
+                land.append(lor)
+
+        elif node.value == 'or':
+            SentencesReader.get_disjunctions(node.left,land,lor,1)
+            SentencesReader.get_disjunctions(node.right,land,lor,1)
+            return
+        else:
+            lor.append(node.value)
