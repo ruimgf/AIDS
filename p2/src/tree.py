@@ -46,20 +46,27 @@ class Tree():
         """
             convertCNF Runs a BFS that ensures that the result tree is a representation of a CNF
         """
+
         l = Queue()
         l.put(self.root)
+        restart = False
+
         while not l.empty():
             e = l.get()
             if e.value == "or": # if we find an and before a or it isn't a CNF
                 if e.left is not None and e.left.value == "and":
                     self.applyDist(e,e.left)
+                    restart = True
                 elif e.right is not None and e.right.value == "and":
                     self.applyDist(e,e.right)
+                    restart = True
             if e.left is not None:
                 l.put(e.left)
             if e.right is not None:
                 l.put(e.right)
 
+        if restart:
+            self.convertCNF()
     def applyDist(self,ndOr,ndAnd):
 
         ndOr.value = "and" # or passa a and
@@ -73,11 +80,3 @@ class Tree():
         else:
             ndOr.left = TreeNode("or",ndAnd.left,ndOrLeft)
             ndOr.right = TreeNode("or",ndAnd.right,ndOrLeft)
-
-
-#t = Tree(TreeNode("or",TreeNode("and",TreeNode("A"),TreeNode("B")),TreeNode("and",TreeNode("C"),TreeNode("D"))))
-
-#t.represent()
-
-#t.convertCNF()
-#t.represent()

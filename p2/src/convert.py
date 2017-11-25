@@ -3,8 +3,7 @@ from iofiles import *
 
 
 def main(args):
-    sentences = SentencesReader.readstdin()
-    SentencesReader.process_sentences(sentences)
-
+    sentences = SentencesReader()
+    sentences.process_sentences()
 if __name__ == '__main__':
     main(sys.argv)

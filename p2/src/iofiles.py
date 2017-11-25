@@ -5,28 +5,30 @@ class SentencesReader():
     """
         Class to read sentences from stdin.
     """
-    @staticmethod
-    def readstdin():
+    def __init__(self):
         with sys.stdin as f : #open stdin as a file
             lines = f.readlines()
-            sentences = []
+            self.sentences = []
             for line in lines: # convert each line to a python object
                 line = line.rstrip()
-                sentences.append(eval(line))
-        return sentences
+                self.sentences.append(eval(line))
 
-    @staticmethod
-    def process_sentences(sentences):
-        for s in sentences:
+
+    def process_sentences(self):
+        for s in self.sentences:
             t = Tree(SentencesReader.process_sentence(s))
             t.convertCNF()
-            t.convertCNF()
+            #t.convertCNF()
             #t.represent()
             r = SentencesReader.get_disjunctions(t.root)
+            
             for e in r:
                 if e is not None:
                     if type(e) is list and len(e)==1:
-                        print(e[0])
+                        if type(e[0]) is tuple:
+                            print(e[0])
+                        else:
+                            print("\'" + e[0] + "\'")
                     else:
                         print(e)
 
@@ -102,20 +104,24 @@ class SentencesReader():
                 raise IOError
         else:
             raise IOError
+
+    @staticmethod
     def get_disjunctions(node):
         land = []
         land.append(SentencesReader._get_disjunctions_rec(node,land))
         return land
+
     @staticmethod
     def _get_disjunctions_rec(node,land):
 
         if node.value == 'and':
             r = SentencesReader._get_disjunctions_rec(node.left,land)
-            if r not in land:
+            if r is not None:
                 land.append(r)
             r = SentencesReader._get_disjunctions_rec(node.right,land)
-            if r not in land:
+            if r is not None:
                 land.append(r)
+            return None
         elif node.value == 'or':
             return SentencesReader._get_disjunctions_rec(node.left,land) + SentencesReader._get_disjunctions_rec(node.right,land)
         else:
