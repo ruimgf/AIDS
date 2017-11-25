@@ -44,7 +44,7 @@ class SentencesReader():
                     elif s[1][0] == '=>':
                         TreeNode('and',SentencesReader.process_sentence(s[1][1]),('not',SentencesReader.process_sentence(s[1][2])))
                     elif s[1][0] == '<=>':
-                        TreeNode('and',('or',SentencesReader.process_sentence(s[1]),SentencesReader.process_sentence(s[2])),('not',SentencesReader.process_sentence(s[2])))
+                        TreeNode('and',('or',SentencesReader.process_sentence(s[1][1]),SentencesReader.process_sentence(s[1][2])),('not',('or',SentencesReader.process_sentence(s[1][1])),('not',SentencesReader.process_sentence(s[1][2]))))
             elif s[0] == 'and':
                 return TreeNode(s[0],SentencesReader.process_sentence(s[1]),SentencesReader.process_sentence(s[2]))
             elif s[0] == 'or':
