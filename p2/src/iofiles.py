@@ -38,12 +38,13 @@ class SentencesReader():
                     return TreeNode(s)
                 elif type(s[1]) is tuple:
                     if s[1][0] == 'and':
-                        TreeNode('or',('not',SentencesReader.process_sentence(s[1])),('not',SentencesReader.process_sentence(s[2])))
+                        TreeNode('or',('not',SentencesReader.process_sentence(s[1][1])),('not',SentencesReader.process_sentence(s[1][2])))
                     elif s[1][0] == 'or':
-                        TreeNode('and',('not',SentencesReader.process_sentence(s[1])),('not',SentencesReader.process_sentence(s[2])))
+                        TreeNode('and',('not',SentencesReader.process_sentence(s[1][1])),('not',SentencesReader.process_sentence(s[1][2])))
                     elif s[1][0] == '=>':
-                        TreeNode('and',SentencesReader.process_sentence(s[1]),('not',SentencesReader.process_sentence(s[2])))
+                        TreeNode('and',SentencesReader.process_sentence(s[1][1]),('not',SentencesReader.process_sentence(s[1][2])))
                     elif s[1][0] == '<=>':
+                        TreeNode('and',('or',SentencesReader.process_sentence(s[1]),SentencesReader.process_sentence(s[2])),('not',SentencesReader.process_sentence(s[2])))
             elif s[0] == 'and':
                 return TreeNode(s[0],SentencesReader.process_sentence(s[1]),SentencesReader.process_sentence(s[2]))
             elif s[0] == 'or':
