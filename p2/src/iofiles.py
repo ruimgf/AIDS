@@ -38,23 +38,64 @@ class SentencesReader():
                     return TreeNode(s)
                 elif type(s[1]) is tuple:
                     if s[1][0] == 'and':
-                        TreeNode('or',SentencesReader.process_sentence(('not',SentencesReader.process_sentence(s[1][1]))),SentencesReader.process_sentence(('not',SentencesReader.process_sentence(s[1][2]))))
+                        # not(A ^ B)
+                        # not(A) V not(B)
+                        C = SentencesReader.process_sentence(('not',s[1][1]))
+                        D = SentencesReader.process_sentence(('not',s[1][2]))
+                        return TreeNode('or',C,D)
                     elif s[1][0] == 'or':
-                        TreeNode('and',SentencesReader.process_sentence(('not',SentencesReader.process_sentence(s[1][1]))),SentencesReader.process_sentence(('not',SentencesReader.process_sentence(s[1][2]))))
+                        # not(A V B)
+                        # not(A) ^ not(B)
+                        C = SentencesReader.process_sentence(('not',s[1][1]))
+                        D = SentencesReader.process_sentence(('not',s[1][2]))
+                        return TreeNode('and',C,D)
                     elif s[1][0] == '=>':
-                        TreeNode('and',SentencesReader.process_sentence(s[1][1]),SentencesReader.process_sentence(('not',SentencesReader.process_sentence(s[1][2]))))
+                        # not(A => B)
+                        # A ^ not(B)
+                        C = SentencesReader.process_sentence(s[1][1])
+                        D = SentencesReader.process_sentence(('not',s[1][2])))
+                        return TreeNode('and',C,D)
                     elif s[1][0] == '<=>':
-                        TreeNode('and',('or',SentencesReader.process_sentence(s[1][1]),SentencesReader.process_sentence(s[1][2])),SentencesReader.process_sentence(('not',('or',SentencesReader.process_sentence(s[1][1]))),SentencesReader.process_sentence(('not',SentencesReader.process_sentence(s[1][2])))))
+                        # not(A <=> B)
+                        # (A V B) ^ (not(B) V A)
+                        # (C V D) ^ (E V F)
+                        # G ^ H
+                        C = SentencesReader.process_sentence(s[1][1])
+                        D = SentencesReader.process_sentence(s[1][2])
+                        E = SentencesReader.process_sentence(('not',s[1][1]))
+                        F = SentencesReader.process_sentence(('not',s[1][2])
+
+                        G = TreeNode('or',C,D)
+                        H = TreeNode('or',E,F)
+                        return TreeNode('and',G,H)
                     elif s[1][0] == 'not':
-                        pass
+                        # (not(not(A))) == A
+                        return SentencesReader.process_sentence(s[1][1])
             elif s[0] == 'and':
-                return TreeNode(s[0],SentencesReader.process_sentence(s[1]),SentencesReader.process_sentence(s[2]))
+                A = SentencesReader.process_sentence(s[1])
+                B = SentencesReader.process_sentence(s[2])
+                return TreeNode(s[0],A,B)
             elif s[0] == 'or':
-                return TreeNode(s[0],SentencesReader.process_sentence(s[1]),SentencesReader.process_sentence(s[2]))
+                A = SentencesReader.process_sentence(s[1])
+                B = SentencesReader.process_sentence(s[2])
+                return TreeNode(s[0],A,B)
             elif s[0] == '=>':
-                return TreeNode('or',SentencesReader.process_sentence(('not',s[1])),SentencesReader.process_sentence(s[2]))
+                # A => B == not(A) or B
+                # C V D
+                C = SentencesReader.process_sentence(('not',s[1]))
+                D = SentencesReader.process_sentence(s[2])
+                return TreeNode('or',C,D)
             elif s[0] == '<=>':
-                return TreeNode('and',TreeNode('or',SentencesReader.process_sentence(('not',s[1])),SentencesReader.process_sentence(s[2])),TreeNode('or',SentencesReader.process_sentence(('not',s[2])),SentencesReader.process_sentence(s[1])))
+                # A <=> B == (not(A) V B) ^ (not(B) V A)
+                # (C v D) ^ (E v F)
+                # G ^ h
+                C = SentencesReader.process_sentence(('not',s[1]))
+                D = SentencesReader.process_sentence(s[2])
+                E = SentencesReader.process_sentence(('not',s[2]))
+                F = SentencesReader.process_sentence(s[1])
+                G = TreeNode('or',C,D)
+                H = TreeNode('or',E,F)
+                return TreeNode('and',G,H)
             else:
                 raise IOError
         else:
