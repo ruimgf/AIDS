@@ -1,5 +1,23 @@
 import sys
+from kb import *
+
 def main(args):
-    pass
+
+    sentences = []
+
+    with sys.stdin as f : #open stdin as a file
+        lines = f.readlines()
+
+        for line in lines: # convert each line to a python object
+            line = line.rstrip()
+            sentences.append(tuple(eval(line)))
+
+
+    a = Kb(sentences)
+    if(a.pl_resolution()):
+        print('True')
+    else:
+        print('False')
+
 if __name__ == '__main__':
-    print(main(sys.argv))
+    main(sys.argv)
