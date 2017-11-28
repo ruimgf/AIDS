@@ -6,20 +6,22 @@ class Kb():
 
 
     def pl_resolution(self):
-    #this function assumes that the list is a list of tupples every tupple defines a disjuntion
+    """
+    this function assumes that the list is a list of tupples every tupple defines a disjuntion
+    """
         clauses = list(self.sentences)
         while True:
             new = []
             for x in clauses:
                 for y in clauses:
-                    if(x != y):
+                    if x != y :
                         resolvents = pl_resolve(x,y)#apply resolution to the 2 clauses
                         for z in resolvents:
                             if not(z):#if we get an empty clause, this means that the tupple is empty
                                 return True
                             else:
                                 new.append(z)
-            if(set(new).issubset(set(clauses))):#check if the new clauses obtained by resolution
+            if set(new).issubset(set(clauses)) :#check if the new clauses obtained by resolution
                 return False
             for i in new:
                 clauses.append(i)
