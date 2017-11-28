@@ -5,8 +5,8 @@ class SentencesReader():
     """
         Class to read sentences from stdin.
     """
-    def __init__(self):
-        with sys.stdin as f : #open stdin as a file
+    def __init__(self,file=sys.stdin):
+        with file as f : #open stdin as a file
             lines = f.readlines()
             self.sentences = []
             for line in lines: # convert each line to a python object
