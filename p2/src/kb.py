@@ -1,4 +1,6 @@
 from copy import *
+import sys
+
 DEBUG = False
 class Kb():
     """Class that represents a KB, it may receive a conjunction of disjuntions,
@@ -18,27 +20,26 @@ class Kb():
                     y = clauses[j]
                     self._pl_resolve(x,y)#apply resolution to the 2 clauses
 
-            flag = False
             for element in self.new:
                 if element not in clauses:
-                    flag = True
                     break
-            if flag:
-                for i in self.new:
-                    if i not in clauses:
-                        sub = [x.issubset(i) or x.issuperset(i) for x in clauses]
-                        flag2 = False
-                        for j in range(len(sub)):
-                            if sub[j]:
-                                flag2 = True # not added
-                                if len(i) < len(clauses[j]): # subset of
-                                    clauses.remove(clauses[j])
-                                    clauses.append(i)
-                        if not flag2:
-                            clauses.append(i)
+            else:
+                print('False')
+                exit()
 
-            else: # is a sub set
-                return False
+            for i in self.new:
+                if i not in clauses:
+                    sub = [x.issubset(i) or x.issuperset(i) for x in clauses]
+
+                    for j in range(len(sub)):
+                        if sub[j]:
+                            if len(i) < len(clauses[j]): # subset of
+                                clauses.remove(clauses[j])
+                                clauses.append(i)
+                    else:
+                        clauses.append(i)
+
+
             if DEBUG:
                 print("clauses:" + str(clauses))
 
@@ -64,20 +65,18 @@ class Kb():
                 aux_x.remove(a)
                 aux_y.remove(Kb.negate_literal(a))
                 aux_x = aux_x.union(aux_y)
-                flag = True
 
                 for element in aux_x:
                     if Kb.negate_literal(element) in aux_x:
-                        flag = False
                         break
-                if flag:
+                else:
                     resolvents.append(aux_x)
 
         for z in resolvents:
 
             if not z:
                 print('True')
-                exit()
+                sys.exit()
             else:
                 if z not in self.new:
                     self.new.append(z)
