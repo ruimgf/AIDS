@@ -1,27 +1,31 @@
 import sys
 from kb import *
 
-def main(args):
+#receives a list of setences if it is in test mode
+def main(args,setences=None):
 
-    sentences = []
+    if setences == None:
 
-    with sys.stdin as f : #open stdin as a file
-        lines = f.readlines()
+        sentences = []
 
-        for line in lines: # convert each line to a python object
-            line = line.rstrip()
-            a = eval(line)
-            if isinstance(a,list):
-                sentences.append(set(a))
-            else:
-                b = [a]
-                sentences.append(set(b))
+        with sys.stdin as f : #open stdin as a file
+            lines = f.readlines()
 
-    if DEBUG:
-        print(sentences)
+            for line in lines: # convert each line to a python object
+                line = line.rstrip()
+                a = eval(line)
+                if isinstance(a,list):
+                    sentences.append(set(a))
+                else:
+                    b = [a]
+                    sentences.append(set(b))
+
+        if DEBUG:
+            print(sentences)
+            
     knowledge = Kb(sentences)
-    print(knowledge.pl_resolution())
+    return knowledge.pl_resolution()
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    print(main(sys.argv))
