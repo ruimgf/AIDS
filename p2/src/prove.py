@@ -10,14 +10,18 @@ def main(args):
 
         for line in lines: # convert each line to a python object
             line = line.rstrip()
-            sentences.append(tuple(eval(line)))
+            a = eval(line)
+            if isinstance(a,list):
+                sentences.append(a)
+            else:
+                b = [a]
+                sentences.append(b)
 
 
-    a = Kb(sentences)
-    if(a.pl_resolution()):
-        print('True')
-    else:
-        print('False')
+    print(sentences)
+    knowledge = Kb(sentences)
+    print(knowledge.pl_resolution())
+
 
 if __name__ == '__main__':
     main(sys.argv)
