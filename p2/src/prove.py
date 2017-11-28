@@ -23,7 +23,8 @@ def main(lista=None):
             print(sentences)
     else:
         for x in lista:
-            sentences.append(set(x))
+            if x is not None:
+                sentences.append(set(x))
 
 
     knowledge = Kb(sentences)
