@@ -13,7 +13,5 @@ class TestSolver(unittest.TestCase):
         "test1"
         self.test_prove("test1",True)
 
-
-
 if __name__ == '__main__':
      unittest.main(verbosity=3)

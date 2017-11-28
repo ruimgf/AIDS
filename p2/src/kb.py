@@ -18,14 +18,13 @@ class Kb():
                 for j in range(i+1,len(clauses)):
                     x = clauses[i]
                     y = clauses[j]
-                    self._pl_resolve(x,y)#apply resolution to the 2 clauses
-
+                    if self._pl_resolve(x,y):#apply resolution to the 2 clauses
+                        return True
             for element in self.new:
                 if element not in clauses:
                     break
             else:
-                print('False')
-                exit()
+                return False
 
             for i in self.new:
                 if i not in clauses:
@@ -76,8 +75,8 @@ class Kb():
         for z in resolvents:
 
             if not z:
-                print('True')
-                sys.exit()
+                return True
             else:
                 if z not in self.new:
                     self.new.append(z)
+        return False

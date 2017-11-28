@@ -2,12 +2,11 @@ import sys
 from kb import *
 
 #receives a list of setences if it is in test mode
-def main(args,setences=None):
+def main(args,lista=None):
 
-    if setences == None:
+    sentences = []
 
-        sentences = []
-
+    if lista is None:
         with sys.stdin as f : #open stdin as a file
             lines = f.readlines()
 
@@ -22,7 +21,11 @@ def main(args,setences=None):
 
         if DEBUG:
             print(sentences)
-            
+    else:
+        for x in lista:
+            sentences.append(set(x))
+
+
     knowledge = Kb(sentences)
     return knowledge.pl_resolution()
 
