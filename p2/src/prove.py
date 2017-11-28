@@ -2,7 +2,7 @@ import sys
 from kb import *
 
 #receives a list of setences if it is in test mode
-def main(args,lista=None):
+def main(lista=None):
 
     sentences = []
 
@@ -31,4 +31,4 @@ def main(args,lista=None):
 
 
 if __name__ == '__main__':
-    print(main(sys.argv))
+    print()
