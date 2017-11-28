@@ -1,9 +1,9 @@
 import sys
 from iofiles import *
 
-def main(args):
+def main():
     sentences = SentencesReader()
     sentences.simplify()
-    sentences.print_sentences()
+    return sentences
 if __name__ == '__main__':
-    main(sys.argv)
+    main().print_sentences()

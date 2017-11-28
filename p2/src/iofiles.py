@@ -5,20 +5,23 @@ class SentencesReader():
     """
         Class to read sentences from stdin.
     """
-    def __init__(self):
-        with sys.stdin as f : #open stdin as a file
-            lines = f.readlines()
-            self.sentences = []
-            for line in lines: # convert each line to a python object
-                line = line.rstrip()
-                self.sentences.append(eval(line))
-            result = []
-            for s in self.sentences: # convert to CNF form
-                t = Tree(SentencesReader.process_sentence(s))
-                t.convertCNF()
-                #t.represent()
-                result += SentencesReader.get_disjunctions(t.root)
-            self.sentences = result
+    def __init__(self,sentences=None):
+        if sentences is None:
+            with sys.stdin as f : #open stdin as a file
+                lines = f.readlines()
+                self.sentences = []
+                for line in lines: # convert each line to a python object
+                    line = line.rstrip()
+                    self.sentences.append(eval(line))
+        else:
+            self.sentences = sentences
+        result = []
+        for s in self.sentences: # convert to CNF form
+            t = Tree(SentencesReader.process_sentence(s))
+            t.convertCNF()
+            #t.represent()
+            result += SentencesReader.get_disjunctions(t.root)
+        self.sentences = result
 
     def simplify(self):
         result = []
@@ -28,25 +31,25 @@ class SentencesReader():
                 l = element
                 for e in element:
                     if SentencesReader.negate_literal(e) in element:
-                        l = []
                         break
-                add = True
-                if l:
+                else:
                     for e in result:
                         if set(l) == set(e):
-                            add = False
                             break
-                    if add:
-                        result.append(l)
+                    else:
+                        if len(l) == 1:
+                            result.append(l[0])
+                        else:
+                            result.append(l)
         self.sentences = result
 
     def print_sentences(self):
         for e in self.sentences:
-            if len(e) == 1:
-                if type(e[0]) is str:
+            if type(e) is not list:
+                if type(e) is str:
                     print("\'" + e[0] +  "\'")
                 else:
-                    print(e[0])
+                    print(e)
             else:
                 print(e)
 
