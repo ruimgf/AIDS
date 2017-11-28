@@ -17,8 +17,8 @@ def main(args):
                 b = [a]
                 sentences.append(set(b))
 
-
-    print(sentences)
+    if DEBUG:
+        print(sentences)
     knowledge = Kb(sentences)
     print(knowledge.pl_resolution())
 
