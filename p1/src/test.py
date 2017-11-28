@@ -41,7 +41,7 @@ class TestSolver(unittest.TestCase):
 
     def test_lbc_informed(self):
         "lbc.txt [informedSearch]"
-        self.t("lbc", "-u")
+        self.t("lbc", "-i")
 
     def test_mir_uniformed(self):
         "mir.txt [uniformedSearch]"

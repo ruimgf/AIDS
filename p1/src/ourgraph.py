@@ -6,7 +6,6 @@ from assemblyProb import Launch
 from edge import Edge
 from node import Node
 
-
 class OurGraph:
     def __init__(self):
         self.nodes = {}

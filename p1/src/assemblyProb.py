@@ -1,35 +1,39 @@
 
 import itertools
 from heapq import heappop, heappush,heapify
-import pulp
+#import pulp
+
 ###############################################################################
 class ourPriorityQueue():
-
     def __init__(self):
-        self.pq = []  # list of entries arranged in a heap
+        self.queue = []  # list of entries arranged in a heap
     def put(self,task, priority=0):
         'Add a new task or update the priority of an existing task'
         entry = task
-        heappush(self.pq, entry)
+        heappush(self.queue, entry)
 
     def remove(self,task):
         'Mark an existing task as REMOVED.  Raise KeyError if not found.'
-        self.pq.remove(task)
-        heapify(self.pq)
+        self.queue.remove(task)
+        heapify(self.queue)
 
     def get(self):
         'Remove and return the lowest priority task. Raise KeyError if empty.'
-        while self.pq:
-            task = heappop(self.pq)
+        while self.queue:
+            task = heappop(self.queue)
             return task
         raise KeyError('pop from an empty priority queue')
 
     def empty(self):
-        return len(self.pq) == 0
+        return len(self.queue) == 0
 
 ################################################################################
 class Operation:
     def __init__(self, pieces,pay_load):
+        """
+        @param pieces: pieces of operator
+        @param pay_load: weight of operator
+        """
         self.pieces = pieces
         self.pay_load = pay_load
 
@@ -39,7 +43,11 @@ class Operation:
 ################################################################################
 class Problem:
     def __init__(self, g, heuristic=None):
-
+        """
+        This class represents the assembly problem
+        @param g: graph of problem
+        @param heuristic: heuristic to use
+        """
         self.in_graph = g
         self.launches = g.info['launches']
         self.operations = []
@@ -56,6 +64,9 @@ class Problem:
                     self.operations.append(Operation(combination, total_weight))
 
     def get_initial_state(self):
+        """
+        @return: initial state
+        """
         return OurState(self, [ () for x in range(len(self.launches))])
 
     def get_valid_operations(self, pieces_on_air, max_payload):
@@ -70,67 +81,33 @@ class Problem:
                     ops.append(Operation(combination, total_weight))
         return ops
 
-    def g(self,state):
+    def g(self, state):
+        """
+        @param state: state
+        @return: path cost
+        """
         return sum(state.cost_launch)
 
     def __repr__(self):
         return str(self.operations)
 
-################################################################################
-#maybe we wave to move this TODO
-
-
-################################################################################
-#heuristic funtions
-
-#not admissible
-def heur_cost_per_kg(state):
-    total_cost = sum(state.cost_launch)
-    total_weight = sum([state.problem.in_graph.nodes[key].info['weight'] for key in state.pieces_on_air()])
-    total_weight = total_weight + 0.0000000001
-
-    return total_cost/total_weight * state.left_weight()
-
-
-#not admissible, dont know if it is good
-def heur_cost_at_this_fly(state):
-    try:
-        return state.left_weight() * state.launches[state.launch_nr].variable_cost
-    except:
-        return 0
-
-#not admissible because it overestimates the cost
-def heur_force_occpancy(state):
-    i = 0
-    occupancy = [0 for i in range(len(state.launches))]
-    number_of_valid_elements = 0
-    for element in state.pieces_list:
-            occupancy[i] = sum([state.problem.in_graph.nodes[id].info['weight'] for id in element])
-            if element:#if list have elements
-                number_of_valid_elements = number_of_valid_elements + 1
-            occupancy[i] = occupancy[i] / state.launches[i].max_payload
-            i = i + 1
-    if number_of_valid_elements != 0:
-        return g(state) * (sum(occupancy) / number_of_valid_elements)
-    else:
-        return 0
-
-#admissable
 def heur_best_from_now(state):
+    """
+    This heuristics computes the cost based in put all weight in the launch with the lowest variable cost.
+    @param state: state to compute the cost.
+    @return: cost
+    """
     try:
         return min([launch.compute_variable_cost(state.left_weight()) for launch in state.launches[state.launch_nr:]])
     except ValueError:
         return 0
-
-#admissable
-
-def heur_best_from_start(state):
-        try:
-            return min([launch.compute_variable_cost(state.left_weight()) for launch in state.launches])
-        except ValueError:
-            return 0
-
+"""
 def heur_optimal(state):
+    
+    #This heuristic solves a linear problem to estimate the left cost.
+    #@param state:
+    #@return:
+    
     lauches = state.launches[state.launch_nr:]
     P = state.left_weight()
     max = [l.max_payload for l in lauches]
@@ -162,16 +139,6 @@ def heur_optimal(state):
 
     for i in range(len(cf)):
         prob += p[i] <= max[i] * y[i]
-    '''
-    print(prob)
-    print(prob.solve())
-    print(LpStatus[prob.status])
-    
-    for variable in prob.variables():
-        print("{} = {}".format(variable.name, variable.varValue))
-    
-    print(value(prob.objective))
-    '''
     prob.solve()
     value = pulp.value(prob.objective)
     prob = None
@@ -180,12 +147,19 @@ def heur_optimal(state):
     else:
         return 0
 
+"""
 
-################################################################################
 
 class OurState:
 
     def __init__(self, problem,pieces_list,launch_nr=0,cost_launch=None):
+        """
+        This class represents one state of our problem
+        @param problem: Problem to solve
+        @param pieces_list: List of pieces on air
+        @param launch_nr: actual launch number
+        @param cost_launch: actual costs per launch
+        """
         self.problem = problem
         self.launches = list(self.problem.in_graph.info['launches'])
         self.launch_nr = launch_nr
@@ -207,7 +181,6 @@ class OurState:
         else:
             self.cost = self.problem.g(self) + self.problem.heuristic(self)
 
-
     def __repr__(self):
         s = ""
         total_cost = 0
@@ -223,6 +196,9 @@ class OurState:
 
 
     def isa_goal_state(self):
+        """
+        @return: True if it is a goal state, false otherwise.
+        """
         nr_pieces_on_air = len(self.pieces_on_air)
 
         if len(self.problem.in_graph) == nr_pieces_on_air:
@@ -231,11 +207,13 @@ class OurState:
             return False
 
     def left_weight(self):
+        """
+        @return: sum of weight of pieces that not sent
+        """
         left_pieces = set(self.problem.in_graph.nodes.keys()) - set(self.pieces_on_air)
         return sum([self.problem.in_graph.nodes[piece_id].info['weight'] for piece_id in left_pieces])
 
     def __lt__(self, other):
-
         try:
             return self.cost < other.cost
 
@@ -253,26 +231,33 @@ class OurState:
         return False
 
     def total_left_capacity(self):
+        """
+        @return: Total capacity of left lauches.
+        """
         return sum([l.max_payload for l in self.launches[self.launch_nr:]])
 
     def get_sucessors(self):
-
-        if self.launch_nr >= len(self.launches):
+        """
+        @return: Valid sucessores of one node.
+        """
+        if self.launch_nr >= len(self.launches): # no more launches
             return []
 
-        if self.total_left_capacity() < self.left_weight():
+        if self.total_left_capacity() < self.left_weight(): # no capacity for all left weight
             return []
 
         ops = self.problem.get_valid_operations(self.pieces_on_air, self.launches[self.launch_nr].max_payload)
 
         succ = []
+        # send any piece operation
         if self.launch_nr + 1 < len(self.launches):
             costs = self.cost_launch.copy()
             costs[self.launch_nr] = 0
             lcopy = self.pieces_list.copy()
-            s = OurState(self.problem, lcopy, self.launch_nr + 1,costs)
+            s = OurState(self.problem, lcopy, self.launch_nr + 1, costs)
             succ.append(s)
 
+        # get valid pieces combinations
         for op in ops:
             lcopy= self.pieces_list.copy()
             lcopy[self.launch_nr] = op.pieces
@@ -282,12 +267,18 @@ class OurState:
             succ.append(s)
 
         return succ
-################################################################################
 
 
 class Launch:
     def __init__(self, date, max_payload, fixed_cost, variable_cost):
-        self.date = date
+        """
+        Class that represents a Launch
+        @param date: date of launch
+        @param max_payload: max_payload
+        @param fixed_cost: fixed_cost of launch
+        @param variable_cost: variable cost of launch
+        """
+        self.date = date #date of the launch
         self.max_payload = float(max_payload)
         self.fixed_cost = float(fixed_cost)
         self.variable_cost = float(variable_cost)
@@ -303,12 +294,20 @@ class Launch:
         return s + "  " + "%.6f" % cost
 
     def compute_variable_cost(self,total_weight):
+        """
+         @param total_weight: weight in the launch
+         @return: variable cost
+        """
         if total_weight != 0:
             return self.variable_cost * total_weight
         else:
             return 0
 
     def compute_cost(self,total_weight):
+        """
+        @param total_weight: weight in the launch
+        @return: total cost
+        """
         if total_weight != 0:
             return self.fixed_cost + self.variable_cost * total_weight
         else:
