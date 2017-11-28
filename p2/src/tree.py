@@ -67,6 +67,7 @@ class Tree():
 
         if restart:
             self.convertCNF()
+
     def applyDist(self,ndOr,ndAnd):
 
         ndOr.value = "and" # or passa a and

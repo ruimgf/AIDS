@@ -15,22 +15,51 @@ class SentencesReader():
 
 
     def process_sentences(self):
+        result = []
         for s in self.sentences:
             t = Tree(SentencesReader.process_sentence(s))
             t.convertCNF()
             #t.convertCNF()
             #t.represent()
-            r = SentencesReader.get_disjunctions(t.root)
-            
-            for e in r:
-                if e is not None:
-                    if type(e) is list and len(e)==1:
-                        if type(e[0]) is tuple:
-                            print(e[0])
-                        else:
-                            print("\'" + e[0] + "\'")
-                    else:
-                        print(e)
+            result += SentencesReader.get_disjunctions(t.root)
+        self.sentences = result
+
+    def simplify(self):
+        result = []
+        for element in self.sentences:
+            if element is not None:
+                element = list(set(element)) # remove repeated
+                l = element
+                for e in element:
+                    if SentencesReader.negate_literal(e) in element:
+                        l = []
+                        break
+                add = True
+                if l:
+                    for e in result:
+                        if set(l) == set(e):
+                            add = False
+                            break
+                    if add:
+                        result.append(l)
+        self.sentences = result
+
+    def print_sentences(self):
+        for e in self.sentences:
+            if len(e) == 1:
+                if type(e[0]) is str:
+                    print("\'" + e[0] +  "\'")
+                else:
+                    print(e[0])
+            else:
+                print(e)
+
+    @staticmethod
+    def negate_literal(literal):
+        if type(literal) is str:
+            return ('not',literal)
+        else:
+            return literal[1]
 
     @staticmethod
     def process_sentence(s):
