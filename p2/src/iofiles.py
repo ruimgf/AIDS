@@ -12,17 +12,13 @@ class SentencesReader():
             for line in lines: # convert each line to a python object
                 line = line.rstrip()
                 self.sentences.append(eval(line))
-
-
-    def process_sentences(self):
-        result = []
-        for s in self.sentences:
-            t = Tree(SentencesReader.process_sentence(s))
-            t.convertCNF()
-            #t.convertCNF()
-            #t.represent()
-            result += SentencesReader.get_disjunctions(t.root)
-        self.sentences = result
+            result = []
+            for s in self.sentences: # convert to CNF form
+                t = Tree(SentencesReader.process_sentence(s))
+                t.convertCNF()
+                #t.represent()
+                result += SentencesReader.get_disjunctions(t.root)
+            self.sentences = result
 
     def simplify(self):
         result = []
