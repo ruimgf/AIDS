@@ -24,12 +24,18 @@ class Kb():
                             return True
                         else:
                             new.append(z)
-            if(set(new).issubset(set(clauses))):#check if the new clauses obtained by resolution
+            flag = False
+            for element in new:
+                if element not in clauses:
+                    flag = True
+                    break
+            if flag:
+                for i in new:
+                    if i not in clauses:
+                        clauses.append(i)
+
+            else: # is a sub set
                 return False
-            for i in new:
-                clauses.append(i)
-            clauses = set(clauses)#to remove duplicates
-            clauses = list(clauses)
 
 def pl_resolve(x,y):
     #this function receives two lists that represent a disjuntion and returns
@@ -42,7 +48,7 @@ def pl_resolve(x,y):
                 aux_y = deepcopy(y)
                 aux_x.remove(a)
                 aux_y.remove(a[1])
-                aux_x = aux_x + aux_y
+                aux_x = aux_x.union(aux_y)
                 resolvents.append(aux_x)
         else:
             if ('not',a) in y:
@@ -50,6 +56,6 @@ def pl_resolve(x,y):
                 aux_y = deepcopy(y)
                 aux_x.remove(a)
                 aux_y.remove(('not',a))
-                aux_x = aux_x + aux_y
+                aux_x = aux_x.union(aux_y)
                 resolvents.append(aux_x)
     return resolvents

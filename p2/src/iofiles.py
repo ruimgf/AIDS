@@ -13,7 +13,7 @@ class SentencesReader():
                 line = line.rstrip()
                 self.sentences.append(eval(line))
             result = []
-            for s in self.sentences: # convert to CNF form 
+            for s in self.sentences: # convert to CNF form
                 t = Tree(SentencesReader.process_sentence(s))
                 t.convertCNF()
                 #t.represent()
@@ -21,10 +21,6 @@ class SentencesReader():
             self.sentences = result
 
     def simplify(self):
-    """
-    simplify sentences, remove duplicate literals and duplicate sentences and
-    remove sentences that are always true
-    """
         result = []
         for element in self.sentences:
             if element is not None:

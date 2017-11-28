@@ -1,7 +1,6 @@
 import sys
 from iofiles import *
 
-
 def main(args):
     sentences = SentencesReader()
     sentences.simplify()

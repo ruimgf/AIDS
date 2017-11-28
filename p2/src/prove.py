@@ -12,10 +12,10 @@ def main(args):
             line = line.rstrip()
             a = eval(line)
             if isinstance(a,list):
-                sentences.append(a)
+                sentences.append(set(a))
             else:
                 b = [a]
-                sentences.append(b)
+                sentences.append(set(b))
 
 
     print(sentences)
