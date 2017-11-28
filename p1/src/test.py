@@ -99,8 +99,13 @@ class TestSolver(unittest.TestCase):
         "t5.txt [uniformedSearch]"
         self.t("t5","-i")
 
+    def test_trivial10_uniformed(self):
+        "trivial10.txt [uniformedSearch]"
+        self.t("trivial10","-u")
 
-
+    def test_trivial10_informed(self):
+        "trivial10.txt [informedSearch]"
+        self.t("trivial10","-i")
 
 if __name__ == '__main__':
 
