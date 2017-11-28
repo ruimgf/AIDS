@@ -28,23 +28,29 @@ class SentencesReader():
         result = []
         for element in self.sentences:
             if element is not None:
-                if type(element) is list and len(element)==1:
-                    result.append(e[0])
-                else:
-                    element = list(set(element)) # remove repeated
-                    l = element
-                    for e in element:
-                        if SentencesReader.negate_literal(e) in element:
-                            l = []
+                element = list(set(element)) # remove repeated
+                l = element
+                for e in element:
+                    if SentencesReader.negate_literal(e) in element:
+                        l = []
+                        break
+                add = True
+                if l:
+                    for e in result:
+                        if set(l) == set(e):
+                            add = False
                             break
-                    if l:
+                    if add:
                         result.append(l)
         self.sentences = result
 
     def print_sentences(self):
         for e in self.sentences:
-            if type(e) is str:
-                print("\'" + e +  "\'")
+            if len(e) == 1:
+                if type(e[0]) is str:
+                    print("\'" + e[0] +  "\'")
+                else:
+                    print(e[0])
             else:
                 print(e)
 
