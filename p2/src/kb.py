@@ -30,13 +30,14 @@ class Kb():
             for i in self.new:
                 if i not in clauses:
                     sub = [x.issubset(i) or x.issuperset(i) for x in clauses]
-
+                    flag = True
                     for j in range(len(sub)):
                         if sub[j]:
                             if len(i) < len(clauses[j]): # subset of
                                 clauses.remove(clauses[j])
                                 clauses.append(i)
-                    else:
+                                flag = False
+                    if flag:
                         clauses.append(i)
 
 
