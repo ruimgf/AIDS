@@ -28,25 +28,25 @@ class SentencesReader():
                 l = element
                 for e in element:
                     if SentencesReader.negate_literal(e) in element:
-                        l = []
                         break
-                add = True
-                if l:
+                else:
                     for e in result:
                         if set(l) == set(e):
-                            add = False
                             break
-                    if add:
-                        result.append(l)
+                    else:
+                        if len(l) == 1:
+                            result.append(l[0])
+                        else:
+                            result.append(l)
         self.sentences = result
 
     def print_sentences(self):
         for e in self.sentences:
-            if len(e) == 1:
-                if type(e[0]) is str:
+            if type(e) is not list:
+                if type(e) is str:
                     print("\'" + e[0] +  "\'")
                 else:
-                    print(e[0])
+                    print(e)
             else:
                 print(e)
 
