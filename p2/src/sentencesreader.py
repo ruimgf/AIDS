@@ -6,6 +6,7 @@ class SentencesReader():
         Class to read sentences from stdin.
     """
     def __init__(self,file=sys.stdin):
+        self.t = None
         with file as f : #open stdin as a file
             lines = f.readlines()
             self.sentences = []
@@ -14,11 +15,15 @@ class SentencesReader():
                 self.sentences.append(eval(line))
             result = []
             for s in self.sentences: # convert to CNF form
-                t = Tree(SentencesReader.process_sentence(s))
-                t.convertCNF()
-                #t.represent()
-                r = SentencesReader.get_disjunctions(t.root)
-                result += r
+                if self.t is None:
+                    self.t = Tree(SentencesReader.process_sentence(s))
+                else:
+                    self.t.root = TreeNode('and',self.t.root,SentencesReader.process_sentence(s))
+
+            self.t.convertCNF()
+            #t.represent()
+            r = SentencesReader.get_disjunctions(self.t.root)
+            result += r
             self.sentences = result
 
     def simplify(self):
@@ -101,11 +106,7 @@ class SentencesReader():
                     elif s[1][0] == 'not':
                         # (not(not(A))) == A
                         return SentencesReader.process_sentence(s[1][1])
-            elif s[0] == 'and':
-                A = SentencesReader.process_sentence(s[1])
-                B = SentencesReader.process_sentence(s[2])
-                return TreeNode(s[0],A,B)
-            elif s[0] == 'or':
+            elif s[0] == 'and' or s[0] == 'or':
                 A = SentencesReader.process_sentence(s[1])
                 B = SentencesReader.process_sentence(s[2])
                 return TreeNode(s[0],A,B)
@@ -118,7 +119,7 @@ class SentencesReader():
             elif s[0] == '<=>':
                 # A <=> B == (not(A) V B) ^ (not(B) V A)
                 # (C v D) ^ (E v F)
-                # G ^ h
+                # G ^ H
                 C = SentencesReader.process_sentence(('not',s[1]))
                 D = SentencesReader.process_sentence(s[2])
                 E = SentencesReader.process_sentence(('not',s[2]))
@@ -133,6 +134,9 @@ class SentencesReader():
 
     @staticmethod
     def get_disjunctions(node):
+        """
+            encontra todas as frases numa só bfs pela arvore
+        """
         sentencesQueue = Queue()
         bfsQueue = Queue()
         if node.value != 'and': # only one sentence
