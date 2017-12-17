@@ -18,7 +18,6 @@ def main(lista=None):
                 else:
                     b = [a]
                     sentences.append(set(b))
-
         if DEBUG:
             print(sentences)
     else:

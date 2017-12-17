@@ -1,11 +1,12 @@
 import sys
-from iofiles import *
+from sentencesreader import *
 
 def main(filename=None):
     if(filename is None):
         sentences = SentencesReader()
         sentences.simplify()
-    else:#for tests
+        return sentences
+    else: #test mode
         sentences = SentencesReader(open(filename))
 
     return sentences

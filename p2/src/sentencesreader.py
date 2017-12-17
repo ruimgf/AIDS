@@ -17,7 +17,8 @@ class SentencesReader():
                 t = Tree(SentencesReader.process_sentence(s))
                 t.convertCNF()
                 #t.represent()
-                result += SentencesReader.get_disjunctions(t.root)
+                r = SentencesReader.get_disjunctions(t.root)
+                result += r
             self.sentences = result
 
     def simplify(self):
@@ -132,22 +133,39 @@ class SentencesReader():
 
     @staticmethod
     def get_disjunctions(node):
-        land = []
-        land.append(SentencesReader._get_disjunctions_rec(node,land))
-        return land
-
-    @staticmethod
-    def _get_disjunctions_rec(node,land):
-
-        if node.value == 'and':
-            r = SentencesReader._get_disjunctions_rec(node.left,land)
-            if r is not None:
-                land.append(r)
-            r = SentencesReader._get_disjunctions_rec(node.right,land)
-            if r is not None:
-                land.append(r)
-            return None
-        elif node.value == 'or':
-            return SentencesReader._get_disjunctions_rec(node.left,land) + SentencesReader._get_disjunctions_rec(node.right,land)
+        sentencesQueue = Queue()
+        bfsQueue = Queue()
+        if node.value != 'and': # only one sentence
+            sentencesQueue.put(node)
         else:
-            return [node.value]
+            bfsQueue.put(node)
+
+        while not bfsQueue.empty():
+            node = bfsQueue.get()
+            if node.left is not None:
+                if node.left.value != 'and': #each sub tree that we find is a sentence
+                    sentencesQueue.put(node.left)
+                else:
+                    bfsQueue.put(node.left)
+            if node.right is not None:
+                if node.right.value != 'and': #each sub tree that we find is a sentence
+                    sentencesQueue.put(node.right)
+                else:
+                    bfsQueue.put(node.right)
+        sentences = []
+        while not sentencesQueue.empty():
+            node = sentencesQueue.get()
+            s = []
+            bfsQueue = Queue()
+            bfsQueue.put(node)
+            while not bfsQueue.empty():
+                node2 = bfsQueue.get()
+                if node2.value != 'or':
+                    s.append(node2.value)
+                else:
+                    if node2.left is not None:
+                        bfsQueue.put(node2.left)
+                    if node2.right is not None:
+                        bfsQueue.put(node2.right)
+            sentences.append(s)
+        return sentences

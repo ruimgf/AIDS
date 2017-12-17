@@ -12,7 +12,8 @@ class TreeNode():
 class Tree():
     def __init__(self,root=None):
         self.root = root
-        self.spaces = [60,40,40,30,20,20,20,25,10,10,10,10,10,10,10,10]
+        self.spaces = [60,40,40,30,20,20,20,25,10,10,10,10,10,10,10,10] # spaces for representation
+
     def represent(self):
         l = Queue()
         l.put(self.root)
@@ -42,6 +43,7 @@ class Tree():
             i += 1
 
         print("")
+
     def convertCNF(self):
         """
             convertCNF Runs a BFS that ensures that the result tree is a representation of a CNF
@@ -53,12 +55,12 @@ class Tree():
 
         while not l.empty():
             e = l.get()
-            if e.value == "or": # if we find an and before a or it isn't a CNF
+            if e.value == "or": # if we find an and after an or it isn't in CNF form
                 if e.left is not None and e.left.value == "and":
-                    self.applyDist(e,e.left)
+                    self._apply_dist_ab(e,e.left)
                     restart = True
                 elif e.right is not None and e.right.value == "and":
-                    self.applyDist(e,e.right)
+                    self._apply_dist_ab(e,e.right)
                     restart = True
             if e.left is not None:
                 l.put(e.left)
@@ -68,7 +70,7 @@ class Tree():
         if restart:
             self.convertCNF()
 
-    def applyDist(self,ndOr,ndAnd):
+    def _apply_dist_ab(self,ndOr,ndAnd):
 
         ndOr.value = "and" # or passa a and
 
