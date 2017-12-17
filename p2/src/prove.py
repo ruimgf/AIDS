@@ -16,8 +16,8 @@ def main(lista=None):
                 if isinstance(a,list):
                     sentences.append(set(a))
                 else:
-                    b = [a]
-                    sentences.append(set(b))
+                    b = set(a)
+                    sentences.append(b)
         if DEBUG:
             print(sentences)
     else:

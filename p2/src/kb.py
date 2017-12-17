@@ -4,7 +4,7 @@ import sys
 DEBUG = False
 class Kb():
     """Class that represents a KB, it may receive a conjunction of disjuntions,
-    so it receives a list of lists, every element must be a disjunction"""
+    so it receives a list of sets, every element must be a disjunction"""
     def __init__(self, sentences_list=None):
         self.sentences = sentences_list
 
