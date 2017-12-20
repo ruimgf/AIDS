@@ -9,14 +9,13 @@ def main(lista=None):
     if lista is None:
         with sys.stdin as f : #open stdin as a file
             lines = f.readlines()
-
             for line in lines: # convert each line to a python object
                 line = line.rstrip()
                 a = eval(line)
                 if isinstance(a,list):
                     sentences.append(set(a))
                 else:
-                    b = set(a)
+                    b = set([a])
                     sentences.append(b)
         if DEBUG:
             print(sentences)
@@ -25,7 +24,7 @@ def main(lista=None):
             if x is not None:
                 sentences.append(set(x))
 
-
+    #print(sentences)
     knowledge = Kb(sentences)
     return knowledge.pl_resolution()
 

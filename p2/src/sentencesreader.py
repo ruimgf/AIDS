@@ -65,7 +65,6 @@ class SentencesReader():
 
     @staticmethod
     def process_sentence(s):
-        print(s)
         if type(s) is str:
             return TreeNode(s)
         elif type(s) is tuple:
