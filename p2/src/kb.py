@@ -7,7 +7,9 @@ class Kb():
     so it receives a list of sets, every element must be a disjunction"""
     def __init__(self, sentences_list=None):
         self.sentences = sentences_list
+        print(self.sentences)
         self.simplifyKB()
+        print(self.sentences)
         #print(self.sentences)
         #for e in self.sentences:
         #    print(list(e))
