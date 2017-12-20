@@ -1,6 +1,7 @@
 from copy import *
 import sys
 import os
+
 DEBUG = False
 class Kb():
     """Class that represents a KB, it may receive a conjunction of disjuntions,
@@ -9,6 +10,7 @@ class Kb():
         self.sentences = sentences_list
         #print(self.sentences)
         self.simplifyKB()
+        print(self.sentences)
         #for e in self.sentences:
         #    print(list(e))
 
@@ -16,6 +18,8 @@ class Kb():
     #this function assumes that the list is a list of tupples every tupple defines a disjuntion
         self.new = []
         while True:
+            self.sentences.sort(key=lambda x: len(x))
+
             for i in range(len(self.sentences)):
                 for j in range(i+1,len(self.sentences)):
                     x = self.sentences[i]
@@ -66,31 +70,28 @@ class Kb():
         #Simplification	2 and 3:
         result = []
         for sentence in self.sentences:
-            if sentence is not None:
-                #for literal in sentence:
-                #    if Kb.negate_literal(literal) in sentence:
-                #        break
-                #else:
+            for literal in sentence:
+                if Kb.negate_literal(literal) in sentence: # tautologie
+                    break
+            else:
                 if sentence not in result:
                     sub = [x.issubset(sentence) or x.issuperset(sentence) for x in result]
                     flag = True
-                    for j in range(len(sub)):
-                        if sub[j] is True:
-                            if len(sentence) < len(result[j]): # subset of
-                                result.remove(result[j])
-                                result.append(sentence)
-                            flag = False
+                    for j in [i for i, x in enumerate(sub) if x]:
+                        if len(sentence) < len(result[j]): # subset of
+                            result.remove(result[j])
+                            result.append(sentence)
+                        flag = False
                     if flag:
                         result.append(sentence)
         self.sentences = result
-        #print('result',result)
         self.simplification_one()
-        #print('after simplification1',self.sentences)
+        self.new = deepcopy(self.sentences)
 
     def _pl_resolve(self,x,y):
         #this function receives two lists that represent a disjuntion and returns
         #the new clauses that can be deducted by resolution with that pair
-        resolvents = []
+        resolvent = None
         for a in x:
             if Kb.negate_literal(a) in y:
                 aux_x = deepcopy(x)
@@ -98,18 +99,13 @@ class Kb():
                 aux_x.remove(a)
                 aux_y.remove(Kb.negate_literal(a))
                 aux_x = aux_x.union(aux_y)
+                resolvent = aux_x
+                break # we only need to resolve one time
 
-                for element in aux_x:
-                    if Kb.negate_literal(element) in aux_x:
-                        break
-                else:
-                    resolvents.append(aux_x)
-
-        for z in resolvents:
-
-            if not z:
+        if resolvent is not None:
+            if not resolvent: #empty clause
                 return True
             else:
-                if z not in self.new:
-                    self.new.append(z)
+                if resolvent not in self.new:
+                    self.new.append(resolvent)
         return False
