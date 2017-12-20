@@ -7,38 +7,31 @@ class Kb():
     so it receives a list of sets, every element must be a disjunction"""
     def __init__(self, sentences_list=None):
         self.sentences = sentences_list
-
+        self.simplifyKB()
+        #print(self.sentences)
+        #for e in self.sentences:
+        #    print(list(e))
 
     def pl_resolution(self):
     #this function assumes that the list is a list of tupples every tupple defines a disjuntion
-        clauses = deepcopy(self.sentences)
         self.new = []
         while True:
-            for i in range(len(clauses)):
-                for j in range(i+1,len(clauses)):
-                    x = clauses[i]
-                    y = clauses[j]
+            for i in range(len(self.sentences)):
+                for j in range(i+1,len(self.sentences)):
+                    x = self.sentences[i]
+                    y = self.sentences[j]
                     if self._pl_resolve(x,y):#apply resolution to the 2 clauses
                         return True
             for element in self.new:
-                if element not in clauses:
+                if element not in self.sentences:
                     break
             else:
                 return False
 
-            for i in self.new:
-                if i not in clauses:
-                    sub = [x.issubset(i) or x.issuperset(i) for x in clauses]
-                    flag = True
-                    for j in range(len(sub)):
-                        if sub[j]:
-                            if len(i) < len(clauses[j]): # subset of
-                                clauses.remove(clauses[j])
-                                clauses.append(i)
-                                flag = False
-                    if flag:
-                        clauses.append(i)
-
+            for element in self.new:
+                if element not in self.sentences:
+                    self.sentences.append(element)
+            self.simplifyKB()
 
             if DEBUG:
                 print("clauses:" + str(clauses))
@@ -50,10 +43,48 @@ class Kb():
         else:
             return literal[1]
 
+    def simplification_one(self):
+        for i in range(len(self.sentences)):
+            for literal in self.sentences[i]:
+                #print(literal)
+                for sentence in self.sentences:
+                    if Kb.negate_literal(literal) in sentence:
+                        #print('break')
+                        break
+                else:
+                    for sentence in self.sentences:
+                        if literal in sentence:
+                            self.sentences.remove(sentence)
+
+                    self.simplification_one()
+                    return
+
     def simplifyKB(self):
-        pass
+        #simplification 1 remove a clause if contains a literal that is not comp-
+        #lementary with any other in the remaining clauses
 
+        #Simplification	2 and 3:
+        result = []
+        for sentence in self.sentences:
+            if sentence is not None:
+                for literal in sentence:
+                    if Kb.negate_literal(literal) in sentence:
+                        break
+                else:
+                    if sentence not in result:
+                        sub = [x.issubset(sentence) or x.issuperset(sentence) for x in result]
+                        flag = True
+                        for j in range(len(sub)):
+                            if sub[j] is True:
+                                if len(sentence) < len(result[j]): # subset of
+                                    result.remove(result[j])
+                                    result.append(sentence)
+                                flag = False
+                        if flag:
+                            result.append(sentence)
+            self.sentences = result
 
+        self.simplification_one()
     def _pl_resolve(self,x,y):
         #this function receives two lists that represent a disjuntion and returns
         #the new clauses that can be deducted by resolution with that pair
