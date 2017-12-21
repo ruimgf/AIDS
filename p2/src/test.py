@@ -72,51 +72,5 @@ class TestSolver(unittest.TestCase):
         self.prove("fp21.txt",True)
     def test_fp22(self):
         self.prove("fp22.txt",True)
-
-
-    '''
-    def test_uuf(self):
-        l = os.listdir("../testFiles/uuf")
-        for e in l:
-            testfile_path = "../testFiles/uuf/" + e
-            with open(testfile_path) as f:
-                print(testfile_path)
-                lines = f.readlines()
-                sentences = []
-                for line in lines: # convert each line to a python object
-                    line = line.rstrip()
-                    a = eval(line)
-                    if isinstance(a,list):
-                        sentences.append(set(a))
-                    else:
-                        b = set([a])
-                        sentences.append(b)
-                #print(sentences)
-                output = prove.main(sentences)
-                if output != True:
-                    print("diferent")
-                #self.assertEqual(True, output)
-    '''
-    '''
-    def test_uuf(self):
-        l = os.listdir("../testFiles/uf")
-        for e in l:
-            testfile_path = "../testFiles/uf/" + e
-            with open(testfile_path) as f:
-                print(testfile_path)
-                lines = f.readlines()
-                sentences = []
-                for line in lines: # convert each line to a python object
-                    line = line.rstrip()
-                    a = eval(line)
-                    if isinstance(a,list):
-                        sentences.append(set(a))
-                    else:
-                        b = set([a])
-                        sentences.append(b)
-                #print(sentences)
-                output = prove.main(sentences)
-                #self.assertEqual(True, output)
-    '''
 if __name__ == '__main__':
      unittest.main(verbosity=3)
