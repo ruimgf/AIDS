@@ -8,18 +8,13 @@ class Kb():
     so it receives a list of sets, every element must be a disjunction"""
     def __init__(self, sentences_list=None):
         self.sentences = sentences_list
-        #print(self.sentences)
         self.simplifyKB()
-        print(self.sentences)
-        #for e in self.sentences:
-        #    print(list(e))
-
+        
     def pl_resolution(self):
     #this function assumes that the list is a list of tupples every tupple defines a disjuntion
         self.new = []
         while True:
             self.sentences.sort(key=lambda x: len(x))
-
             for i in range(len(self.sentences)):
                 for j in range(i+1,len(self.sentences)):
                     x = self.sentences[i]
@@ -35,7 +30,7 @@ class Kb():
             for element in self.new:
                 if element not in self.sentences:
                     self.sentences.append(element)
-            self.simplifyKB()
+            #self.simplifyKB()
             if len(self.sentences) == 0:
                 return False
             if DEBUG:
@@ -53,20 +48,17 @@ class Kb():
             for literal in self.sentences[i]:
                 for sentence in self.sentences:
                     if Kb.negate_literal(literal) in sentence:
-                        #print('break')
                         break
                 else:
                     for sentence in self.sentences:
                         if literal in sentence:
                             self.sentences.remove(sentence)
-                            #print(self.sentences)
                     self.simplification_one()
                     return
 
     def simplifyKB(self):
         #simplification 1 remove a clause if contains a literal that is not comp-
         #lementary with any other in the remaining clauses
-        self.simplification_one()
         #Simplification	2 and 3:
         result = []
         for sentence in self.sentences:
