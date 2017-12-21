@@ -40,19 +40,16 @@ class SentencesReader():
                         if set(l) == set(e):
                             break
                     else:
-                        if len(l) == 1:
-                            result.append(l[0])
-                        else:
-                            result.append(l)
+                        result.append(l)
         self.sentences = result
 
     def print_sentences(self):
         for e in self.sentences:
-            if type(e) is not list:
-                if type(e) is str:
+            if len(e) == 1:
+                if type(e[0]) is str:
                     print("\'" + e[0] +  "\'")
                 else:
-                    print(e)
+                    print(e[0])
             else:
                 print(e)
 
