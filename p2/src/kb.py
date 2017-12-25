@@ -9,7 +9,7 @@ class Kb():
     def __init__(self, sentences_list=None):
         self.sentences = sentences_list
         self.simplifyKB()
-        
+
     def pl_resolution(self):
     #this function assumes that the list is a list of tupples every tupple defines a disjuntion
         self.new = []
@@ -30,7 +30,7 @@ class Kb():
             for element in self.new:
                 if element not in self.sentences:
                     self.sentences.append(element)
-            #self.simplifyKB()
+            self.simplifyKB()
             if len(self.sentences) == 0:
                 return False
             if DEBUG:

@@ -23,8 +23,6 @@ def main(lista=None):
         for x in lista:
             if x is not None:
                 sentences.append(set(x))
-
-    #print(sentences)
     knowledge = Kb(sentences)
     return knowledge.pl_resolution()
 

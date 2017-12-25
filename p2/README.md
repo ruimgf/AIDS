@@ -1,1 +1,0 @@
-# Propositional logic reasoner
